@@ -1,0 +1,5 @@
+Open Data BCN del Ajuntament de Barcelona
+Accidents managed by the local police in the city of Barcelona
+Creative Commons Attribution 4.0. License
+
+https://opendata-ajuntament.barcelona.cat/data/en/dataset/accidents-gu-bcn

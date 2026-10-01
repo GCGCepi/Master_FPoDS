@@ -1,0 +1,10 @@
+Zero values in 2024 and 2025, from empty cells to zero
+column names
+codi_barri in 2020 format problem
+extra spaces in text fields
+
+
+derived severity field:
+- mortal : one or more fatalities
+- grave : serious injury with no fatalities
+- leve : all the other accidents

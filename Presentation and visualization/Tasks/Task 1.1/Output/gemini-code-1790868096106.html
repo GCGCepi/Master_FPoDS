@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploratory Data Analysis: Mass Shooting Tracker</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #2980b9;
+            --bg-light: #f8f9fa;
+            --border: #dee2e6;
+            --text: #333333;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        h1 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: var(--secondary);
+            margin-top: 40px;
+            font-size: 1.5em;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 25px 0;
+            font-size: 0.95em;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--bg-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 16px;
+        }
+        ul {
+            margin-bottom: 16px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .meta-note {
+            font-size: 0.85em;
+            color: #6c757d;
+            font-style: italic;
+        }
+        /* New styles for the chart images */
+        .chart-container {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .chart-container h3 {
+            color: var(--primary);
+            font-size: 1.3em;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+        }
+        .chart-caption {
+            font-size: 0.95em;
+            color: #555;
+            margin-top: 15px;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Exploratory Data Analysis Report: Mass Shooting Tracker (2013-2025)</h1>
+    <p>This document presents a comprehensive, bottom-up exploratory data analysis (EDA) intended to characterize the dataset, evaluate underlying distributions and data quality, and establish a foundational visualization strategy[cite: 2].</p>
+
+    <h2>1. Data Schema and Field Characterization</h2>
+    <p>The following schema definitions fulfill the requirement to classify each field's typology, domain, spatial/temporal nature, and precision parameters[cite: 1, 2].</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Field Name</th>
+                <th>Data Type / Subtype</th>
+                <th>Kind</th>
+                <th>Domain & Value Range</th>
+                <th>Unit / Precision</th>
+                <th>Update Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>incident_id</code></td>
+                <td>Numeric (Integer)</td>
+                <td>Identifier</td>
+                <td>Positive integers ( $\mathbb{Z}^+$ )</td>
+                <td>1 (Exact)</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>date</code></td>
+                <td>String (ISO 8601)</td>
+                <td>Temporal</td>
+                <td>01/01/2013 &ndash; 12/31/2025</td>
+                <td>Day (YYYY-MM-DD)</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>location</code> / <code>city</code></td>
+                <td>String (Categorical)</td>
+                <td>Geographical</td>
+                <td>US Municipalities / Locales</td>
+                <td>Exact string match</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>state</code></td>
+                <td>String (Categorical)</td>
+                <td>Geographical</td>
+                <td>50 US States + DC</td>
+                <td>2-letter abbreviation</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>killed</code></td>
+                <td>Numeric (Integer)</td>
+                <td>Metric (Count)</td>
+                <td>[0, 60+]</td>
+                <td>1 Person</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>wounded</code></td>
+                <td>Numeric (Integer)</td>
+                <td>Metric (Count)</td>
+                <td>[0, 400+]</td>
+                <td>1 Person</td>
+                <td>Daily</td>
+            </tr>
+            <tr>
+                <td><code>shooters</code></td>
+                <td>String (Categorical)</td>
+                <td>Metadata</td>
+                <td>"Unknown", "1", [Names]</td>
+                <td>N/A</td>
+                <td>Variable</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>2. Distributions, Groupings, and Relationships</h2>
+    <p>An examination of the data's topological and statistical properties reveals distinct patterns critical for downstream modeling[cite: 1, 2]:</p>
+    <ul>
+        <li><strong>Spatio-Temporal Aggregation:</strong> Groupings must be handled hierarchically. Temporally, analyzing data at the daily level introduces high variance and zero-inflation; aggregating by week or month is necessary to extract underlying trend and seasonality components. Spatially, state-level aggregations mask critical intra-state variations; grouping by Metropolitan Statistical Area (MSA) provides a more accurate reflection of incident density relative to population.</li>
+        <li><strong>Overdispersed Distributions:</strong> The casualty fields (<code>killed</code> and <code>wounded</code>) are bounded at zero and heavily right-skewed. Rather than a standard Poisson distribution, these count metrics exhibit significant overdispersion (variance $\gg$ mean). They are best modeled using a Negative Binomial distribution, reflecting the underlying heterogeneity of mass casualty events where the baseline probability of an event occurring is decoupled from the conditional magnitude of the event once it begins.</li>
+        <li><strong>Bivariate Relationships:</strong> The correlation between <code>killed</code> and <code>wounded</code> is positive but non-linear. The lethality ratio (Killed / Total Casualties) varies drastically based on the weapon utilized and the indoor/outdoor nature of the venue, serving as a latent variable that must be inferred through spatial contexts.</li>
+    </ul>
+
+    <h2>3. Missing Data, Incoherences, and Epistemological Limitations</h2>
+    <p>A rigorous evaluation of data integrity highlights several structural challenges[cite: 1, 2]:</p>
+    <ul>
+        <li><strong>Missing Data Mechanisms:</strong> The core metrics (date, location, casualties) exhibit near-zero missingness because they dictate dataset inclusion. However, the <code>shooters</code> field is frequently missing. This is not Missing Completely at Random (MCAR); it is likely Missing Not at Random (MNAR), as incidents related to gang violence or immediate suspect evasion are disproportionately less likely to have confirmed shooter identities in initial reporting compared to high-profile lone-actor events.</li>
+        <li><strong>Structural Incoherences:</strong> The primary incoherence stems from the dataset's operational ontology. The Mass Shooting Tracker defines a mass shooting strictly by a numeric threshold (4 or more people shot, regardless of fatalities), whereas historical FBI definitions focused on fatalities (3 or more killed). This definitional divergence means the dataset conflates highly disparate sociological phenomena—such as targeted public massacres, domestic violence events, and organized crime shootouts—under a single numerical umbrella.</li>
+        <li><strong>Real vs. Forecast Data:</strong> The dataset relies strictly on empirical, ex-post reporting of real events. No forecast data or predictive intervals are present[cite: 1].</li>
+    </ul>
+
+    <h2>4. Outlier Analysis and Extreme Value Theory</h2>
+    <p>Identifying and handling outliers in this dataset requires a domain-specific approach[cite: 1, 2]. In many data science contexts, extreme outliers (e.g., $z > 3$) are candidates for Winsorization or exclusion to normalize distributions. Here, extreme events (such as the 2017 Las Vegas shooting or the 2016 Orlando nightclub shooting) are the primary objects of interest. </p>
+    <p>These outliers exist in the extreme right tail of the distribution. Applying Extreme Value Theory (EVT), specifically the Generalized Pareto Distribution (GPD), is appropriate for modeling the tail behavior of these high-lethality events. Standard measures of central tendency (mean) are highly distorted by these outliers; therefore, exploratory reporting must rely on the median, Interquartile Range (IQR), and Median Absolute Deviation (MAD) to describe typical events, while treating the long tail as a distinct, critical signal rather than noise.</p>
+
+    <h2>5. Visualization Strategy for High-Dimensional Data</h2>
+    <p>Based on this EDA, the final visualization architecture must move beyond simple bar charts to capture the multidimensionality of the data[cite: 2]:</p>
+    <ul>
+        <li><strong>Temporal Evolution:</strong> Ridgeline plots (Joyplots) will be utilized to show the distribution of incidents per month across the 2013-2025 timeline, effectively highlighting both increasing frequencies and seasonal shifts.</li>
+        <li><strong>Geospatial Density:</strong> A bivariate choropleth map or Kernel Density Estimation (KDE) overlay on a US map will map incident frequency against state population density, normalizing the data per 100,000 residents to prevent the map from merely functioning as a population heatmap.</li>
+        <li><strong>Casualty Disparities:</strong> Scatter plots representing <code>wounded</code> versus <code>killed</code> will utilize logarithmic scales on both axes to compress the extreme outliers, allowing for visual separation of typical incidents (clustered near the origin) from high-magnitude massacres, with bubble size mapped to <code>total_victims</code>.</li>
+    </ul>
+
+    <h2>6. Exploratory Charts</h2>
+    <p>The following graphical visualizations were produced during the EDA phase to expose the underlying trends, regional concentrations, and seasonal behaviors of the dataset[cite: 2].</p>
+
+    <div class="chart-container">
+        <h3>Total Mass Shootings per Year (2013-2025)</h3>
+        <img src="total_mass_shootings_per_year.png" alt="Bar chart depicting the total mass shootings per year from 2013 to 2025">
+        <p class="chart-caption"><strong>Description:</strong> This vertical bar chart maps the temporal aggregation of incidents on a strictly yearly basis. It is essential for determining longitudinal trends—specifically, whether the raw frequency of mass casualty events is escalating, stabilizing, or declining over the observed timeline. This single-variable distribution serves as a macroeconomic baseline for further multivariate analysis.</p>
+    </div>
+
+    <div class="chart-container">
+        <h3>Choropleth Map: United States Regional Density</h3>
+        <img src="choropleth_map.png" alt="Choropleth map displaying the frequency of mass shootings across individual US States">
+        <p class="chart-caption"><strong>Description:</strong> This choropleth map translates spatial data into visual density by shading individual U.S. states based on their aggregated incident counts. This graphical approach quickly exposes regional hotspots and allows data scientists to hypothesize correlations involving state-level population densities, legislative environments, and socioeconomic metrics.</p>
+    </div>
+
+    <div class="chart-container">
+        <h3>Heatmap: Incident Seasonality</h3>
+        <img src="heatmap_incident_seasonality.png" alt="Heatmap showing the concentration of mass shootings by month and year">
+        <p class="chart-caption"><strong>Description:</strong> This matrix-style heatmap plots years along one axis and calendar months along the other, using color intensity to represent incident volume. It is highly effective for identifying seasonal patterns (e.g., summer spikes versus winter lulls) and pinpointing precise anomalous months where clusters of events broke from historical trends.</p>
+    </div>
+
+</body>
+</html>
