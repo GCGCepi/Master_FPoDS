@@ -17,10 +17,13 @@
       <h2 id="load-title">Load a training log</h2>
       <div class="drop-zone" id="drop-zone">
         <p>Drag and drop a <code>.csv</code> file here, or</p>
-        <label class="file-button">
-          Choose file
-          <input type="file" id="file-input" accept=".csv">
-        </label>
+        <div class="loader-buttons">
+          <label class="file-button">
+            Choose file
+            <input type="file" id="file-input" accept=".csv">
+          </label>
+          <button type="button" class="file-button" id="sample-button">Load sample</button>
+        </div>
         <p class="note">Columns: <code>epoch</code>, <code>train_loss</code>, <code>val_loss</code>, and optionally <code>train_acc</code> and <code>val_acc</code>.</p>
       </div>
       <div class="messages" id="messages" role="status" aria-live="polite"></div>
@@ -28,7 +31,17 @@
 
     <section class="card" aria-labelledby="charts-title">
       <h2 id="charts-title">Training curves</h2>
-      <p class="placeholder">Charts — coming soon</p>
+      <p class="placeholder" id="charts-placeholder">No training log loaded yet.</p>
+      <div id="charts" hidden>
+        <label class="toggle"><input type="checkbox" id="log-scale"> Logarithmic scale for the loss chart</label>
+        <div class="chart-box">
+          <canvas id="loss-chart" role="img" aria-label="Loss chart"></canvas>
+        </div>
+        <div class="chart-box" id="acc-chart-box">
+          <canvas id="acc-chart" role="img" aria-label="Accuracy chart"></canvas>
+        </div>
+        <p class="note">Solid lines are the training set, dashed lines the validation set. The diamond marks the best epoch (lowest val_loss). Hover a chart to see the exact values.</p>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="diagnosis-title">
@@ -38,6 +51,7 @@
 
     <section class="card" aria-labelledby="summary-title">
       <h2 id="summary-title">Summary</h2>
+      <div id="key-figures"></div>
       <div id="summary">
         <p class="placeholder">No training log loaded yet.</p>
       </div>
@@ -51,6 +65,7 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

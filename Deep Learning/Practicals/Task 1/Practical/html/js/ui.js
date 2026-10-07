@@ -74,6 +74,39 @@ export function formatNumber(value) {
 }
 
 /**
+ * Shows the best epoch and the final train/validation gaps as a short list.
+ * Accuracy items are left out when the log has no accuracy.
+ * @param {HTMLElement} container - element that will hold the list
+ * @param {{bestEpoch: number, bestValLoss: number, bestValAcc: (number|null), lossGap: number, accGap: (number|null)}} analysis - output of analyzeLog
+ * @returns {void}
+ */
+export function renderKeyFigures(container, analysis) {
+  const items = [
+    ['Best epoch (lowest val_loss)', `${analysis.bestEpoch} — val_loss ${formatNumber(analysis.bestValLoss)}`
+      + (analysis.bestValAcc === null ? '' : `, val_acc ${formatNumber(analysis.bestValAcc)}`)],
+    ['Final loss gap (val_loss − train_loss)', formatNumber(analysis.lossGap)],
+  ];
+  if (analysis.accGap !== null) {
+    items.push(['Final accuracy gap (train_acc − val_acc)', formatNumber(analysis.accGap)]);
+  }
+
+  const list = document.createElement('dl');
+  list.className = 'key-figures';
+  for (const [label, value] of items) {
+    const term = document.createElement('dt');
+    term.textContent = label;
+    const definition = document.createElement('dd');
+    definition.textContent = value;
+    list.append(term, definition);
+  }
+
+  const note = document.createElement('p');
+  note.className = 'note';
+  note.textContent = 'A positive gap means the model does better on the training data than on the validation data; a large one is a sign of overfitting.';
+  container.replaceChildren(list, note);
+}
+
+/**
  * Draws the summary statistics as a table with one row per log column.
  * @param {HTMLElement} container - element that will hold the table
  * @param {{name: string, stats: {count: number, min: number, max: number, mean: number, median: number, std: number}}[]} summaries - output of summarizeColumns

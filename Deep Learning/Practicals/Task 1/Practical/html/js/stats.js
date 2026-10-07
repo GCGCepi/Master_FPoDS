@@ -45,3 +45,31 @@ export function describe(values) {
 export function summarizeColumns(columns) {
   return Object.entries(columns).map(([name, values]) => ({ name, stats: describe(values) }));
 }
+
+/**
+ * Finds the best epoch and the final train/validation gaps of a log (spec §4.4).
+ * The best epoch is the one with the lowest val_loss (the first one if tied).
+ * Gaps are measured at the last epoch and are positive when the model does
+ * better on the training set than on the validation set.
+ * @param {Object<string, number[]>} columns - numbers per column (from validateTrainingLog)
+ * @param {boolean} hasAccuracy - whether train_acc and val_acc are present
+ * @returns {{bestEpoch: number, bestValLoss: number, bestValAcc: (number|null), lossGap: number, accGap: (number|null)}}
+ *   accuracy values are null when the log has no accuracy
+ */
+export function analyzeLog(columns, hasAccuracy) {
+  const { epoch, train_loss: trainLoss, val_loss: valLoss } = columns;
+
+  let best = 0;
+  for (let i = 1; i < valLoss.length; i += 1) {
+    if (valLoss[i] < valLoss[best]) best = i; // strict "<" keeps the first epoch on ties
+  }
+
+  const last = epoch.length - 1;
+  return {
+    bestEpoch: epoch[best],
+    bestValLoss: valLoss[best],
+    bestValAcc: hasAccuracy ? columns.val_acc[best] : null,
+    lossGap: valLoss[last] - trainLoss[last],
+    accGap: hasAccuracy ? columns.train_acc[last] - columns.val_acc[last] : null,
+  };
+}

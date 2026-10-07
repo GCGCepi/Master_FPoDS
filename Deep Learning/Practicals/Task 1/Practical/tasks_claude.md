@@ -28,7 +28,7 @@ Rules:
   - Check: clicking a header sorts the table, and pagination works.
 - [x] **2.4** Switch the page to training logs: replace the dataset validation with `validateTrainingLog` (spec §3.1, §3.2, §4.2), regenerate `data/invalid/` for the log format, remove the "Target and task" section, the network-training placeholders and their code, and add the Charts and Diagnosis placeholders. Update the page subtitle.
   - Check: a valid log loads; each file in `data/invalid/` shows its correct message and the previous table stays visible; a log without accuracy columns is accepted; extra columns give a notice.
-- [ ] **2.5** Add the "Load sample" button.
+- [x] **2.5** Add the "Load sample" button.
   - New files: `html/data/training_log.csv` (copied from `practical1/part 1/`)
   - Check: "Load sample" shows `training_log.csv`, "60 rows loaded" and the table.
 
@@ -37,9 +37,9 @@ Rules:
 - [x] **3.1** Show summary statistics for every numeric column: count, min, max, mean, median and sample std.
   - New files: `html/js/stats.js`
   - Check: the values on the page match a spreadsheet or NumPy to 4 decimals.
-- [ ] **3.2** Show the best epoch (and its `val_acc`) and the final train/val gaps for loss and accuracy.
+- [x] **3.2** Show the best epoch (and its `val_acc`) and the final train/val gaps for loss and accuracy.
   - Check: the values are correct for `training_log.csv`, and accuracy values are hidden for a log without accuracy.
-- [ ] **3.3** Draw the loss and accuracy charts (train and validation) with titles, axis labels, legend, tooltips and the best-epoch marker. Hide the accuracy chart when there is no accuracy. Add the log-scale toggle to the loss chart. Load Chart.js from its pinned URL.
+- [x] **3.3** Draw the loss and accuracy charts (train and validation) with titles, axis labels, legend, tooltips and the best-epoch marker. Hide the accuracy chart when there is no accuracy. Add the log-scale toggle to the loss chart. Load Chart.js from its pinned URL.
   - New files: `html/js/charts.js`
   - Check: both charts appear for `training_log.csv`, hovering shows the CSV values, the marker is at the best epoch, and the toggle works.
 - [ ] **3.4** Add the diagnosis: the four anomaly rules of spec §4.6, each with explanation and hint, and "No anomalies detected" when none is found.

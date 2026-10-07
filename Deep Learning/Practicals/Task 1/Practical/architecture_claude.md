@@ -60,7 +60,7 @@ The only module that connects everything. It:
 
 - `describe(values)` → `{ count, min, max, mean, median, std }` (sample std, n − 1)
 - `summarizeColumns(columns)` → `describe` for every log column
-- `analyzeLog(columns, hasAccuracy)` → `{ bestEpoch, bestValAcc, lossGap, accGap }`
+- `analyzeLog(columns, hasAccuracy)` → `{ bestEpoch, bestValLoss, bestValAcc, lossGap, accGap }`
 - `diagnose(columns, hasAccuracy)` → a list of findings `{ anomaly, epochs, explanation, hint }`, plus the checks skipped for lack of epochs (rules in spec §4.6)
 
 ### `js/ui.js` — DOM only, no logic
@@ -71,6 +71,7 @@ Rendering helpers: messages, table (pagination + sorting), summary, log analysis
 
 - `createCurveCharts(lossCanvas, accCanvas)` → handles for the loss and accuracy charts
 - `showCurves(handles, columns, hasAccuracy, bestEpoch)`, `setLogScale(handles, on)`
+- `chartsAvailable()` → false when Chart.js did not load (no internet), so the page can say so instead of breaking
 
 The best-epoch marker is drawn as an extra single-point dataset, so no Chart.js plugin is needed.
 
