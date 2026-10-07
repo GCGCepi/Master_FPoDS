@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--
+    Content Security Policy (see architecture.md → "Security").
+    - No inline scripts or styles: everything lives in app.js / styles.css.
+    - Scripts only from this folder and the pinned Chart.js file on jsDelivr.
+    - No network requests from the page (connect-src 'none'): the CSV never leaves the browser.
+    - `file:` is listed so the page also works when opened directly from disk.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self' file: https://cdn.jsdelivr.net; style-src 'self' file:; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Load a CSV file and explore it as a table, summary statistics and a grouped bar chart. Runs entirely in your browser.">
+
+  <title>CSV Data Visualizer</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Chart.js 4.4.7, pinned version + Subresource Integrity: the browser refuses the file if it was tampered with. -->
+  <script defer
+          src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"
+          integrity="sha384-zYPBGXwO4633CABX/5Spf6emCKUJCfoOkhOMYyxMsatqQZPnDblmmOewfjsIVWCM"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="12" width="4" height="9" rx="1.5"></rect>
+          <rect x="10" y="7" width="4" height="14" rx="1.5"></rect>
+          <rect x="17" y="3" width="4" height="18" rx="1.5"></rect>
+        </svg>
+        <div>
+          <h1>CSV Data Visualizer</h1>
+          <p class="subtitle">Table, summary and chart — processed locally, nothing is uploaded.</p>
+        </div>
+      </div>
+      <button type="button" id="themeToggle" class="icon-button" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 1. File selector (click or drag & drop) -->
+    <section class="card dropzone" id="dropzone" aria-labelledby="dropTitle">
+      <input type="file" id="csvFile" class="visually-hidden" accept=".csv,text/csv">
+      <label for="csvFile" class="dropzone-label">
+        <svg class="dropzone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"></path></svg>
+        <span id="dropTitle" class="dropzone-title">Drop a CSV file here or <span class="link">browse</span></span>
+        <span class="dropzone-hint">Required columns: <code>Any</code>, <code>Lloc</code>, <code>Sexe</code>, <code>Valor</code> · max 5&nbsp;MB</span>
+      </label>
+      <p class="file-meta hidden" id="fileMeta"></p>
+    </section>
+
+    <!-- 6. Status / error messages -->
+    <div id="message" class="message hidden" role="status" aria-live="polite"></div>
+
+    <div id="results" class="results hidden">
+      <!-- Filters: one row above the content they scope -->
+      <div class="filters" role="group" aria-label="Filters">
+        <label for="yearFilter" class="filter-label">Year</label>
+        <select id="yearFilter" class="select"></select>
+      </div>
+
+      <!-- 4. Summary of computed values -->
+      <section class="card" aria-labelledby="summaryTitle">
+        <h2 id="summaryTitle">Summary</h2>
+        <div class="kpi-grid" id="summaryGrid"></div>
+      </section>
+
+      <!-- 5. Chart -->
+      <section class="card" aria-labelledby="chartTitle">
+        <div class="card-head">
+          <h2 id="chartTitle">Total Valor by Lloc and Sexe</h2>
+          <p class="card-note" id="chartNote"></p>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chart" role="img" aria-label="Grouped bar chart of total Valor by Lloc and Sexe"></canvas>
+        </div>
+        <p class="chart-fallback hidden" id="chartFallback">
+          The chart library could not be loaded (are you offline?). The table and summary below still work.
+        </p>
+      </section>
+
+      <!-- 3. Data table -->
+      <section class="card" aria-labelledby="tableTitle">
+        <div class="card-head">
+          <h2 id="tableTitle">Data</h2>
+          <p class="card-note" id="tableNote"></p>
+        </div>
+        <div class="table-wrapper">
+          <table id="dataTable">
+            <caption class="visually-hidden">Loaded rows. Select a column header to sort.</caption>
+            <thead><tr id="tableHead"></tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>HTML · CSS · vanilla JavaScript · Chart.js — no server, no tracking.</p>
+  </footer>
+</body>
+</html>

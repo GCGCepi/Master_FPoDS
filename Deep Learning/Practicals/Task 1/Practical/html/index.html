@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neural Network Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Neural Network Lab</h1>
+    <p class="subtitle">Load a training log to see its loss and accuracy curves and spot overfitting, underfitting, divergence or a plateau. Everything runs in your browser.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="load-title">
+      <h2 id="load-title">Load a training log</h2>
+      <div class="drop-zone" id="drop-zone">
+        <p>Drag and drop a <code>.csv</code> file here, or</p>
+        <label class="file-button">
+          Choose file
+          <input type="file" id="file-input" accept=".csv">
+        </label>
+        <p class="note">Columns: <code>epoch</code>, <code>train_loss</code>, <code>val_loss</code>, and optionally <code>train_acc</code> and <code>val_acc</code>.</p>
+      </div>
+      <div class="messages" id="messages" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="charts-title">
+      <h2 id="charts-title">Training curves</h2>
+      <p class="placeholder">Charts — coming soon</p>
+    </section>
+
+    <section class="card" aria-labelledby="diagnosis-title">
+      <h2 id="diagnosis-title">Diagnosis</h2>
+      <p class="placeholder">Diagnosis — coming soon</p>
+    </section>
+
+    <section class="card" aria-labelledby="summary-title">
+      <h2 id="summary-title">Summary</h2>
+      <div id="summary">
+        <p class="placeholder">No training log loaded yet.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="table-title">
+      <h2 id="table-title">Data</h2>
+      <div id="data-table">
+        <p class="placeholder">No training log loaded yet.</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
