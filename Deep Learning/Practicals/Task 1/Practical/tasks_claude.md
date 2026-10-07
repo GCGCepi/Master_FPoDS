@@ -42,15 +42,15 @@ Rules:
 - [x] **3.3** Draw the loss and accuracy charts (train and validation) with titles, axis labels, legend, tooltips and the best-epoch marker. Hide the accuracy chart when there is no accuracy. Add the log-scale toggle to the loss chart. Load Chart.js from its pinned URL.
   - New files: `html/js/charts.js`
   - Check: both charts appear for `training_log.csv`, hovering shows the CSV values, the marker is at the best epoch, and the toggle works.
-- [ ] **3.4** Add the diagnosis: the four anomaly rules of spec §4.6, each with explanation and hint, and "No anomalies detected" when none is found.
+- [x] **3.4** Add the diagnosis: the four anomaly rules of spec §4.6, each with explanation and hint, and "No anomalies detected" when none is found.
   - New files: `html/data/examples/*.csv` (one per anomaly, plus a healthy log)
   - Check: each example log gives its expected diagnosis, and `training_log.csv` is diagnosed correctly.
-- [ ] **3.5** Add the unit test page for parsing, validation, statistics and diagnosis.
+- [x] **3.5** Add the unit test page for parsing, validation, statistics and diagnosis.
   - New files: `html/tests.html`, `html/js/tests.js`
   - Check: `http://localhost:8000/tests.html` shows all tests passing.
 
 ## Phase 4. Finish
 
-- [ ] **4.1** Final review: comments, no `console.log`, no unused code, keyboard navigation, and no network requests except the library and the app's own files.
+- [x] **4.1** Final review: comments, no `console.log`, no unused code, keyboard navigation, and no network requests except the library and the app's own files.
   - Check: every acceptance criterion in spec §6 is ticked.
-- [ ] **4.2** Tell the student that development is complete and summarize what was built.
+- [x] **4.2** Tell the student that development is complete and summarize what was built.

@@ -57,7 +57,7 @@ epoch,train_loss,val_loss,train_acc,val_acc
 - Empty trailing lines are ignored.
 - Column order does not matter; column names are matched case-insensitively.
 - Extra columns are allowed and are ignored (with a notice to the user).
-- Maximum file size: **10 MB**. Maximum rows: **100 000**.
+- Maximum file size: **50 MB**. Maximum rows: **100 000**.
 
 ## 4. Main features
 
@@ -86,12 +86,15 @@ Errors that must be detected: empty file, missing header, missing required colum
 - The data is displayed in an HTML table.
 - If there are more than 50 rows, the table is paginated (50 rows per page).
 - Columns can be sorted by clicking their header.
-- Numbers are displayed with a consistent number of decimals (4 by default).
+- Numbers are displayed with a consistent number of decimals (4 by default), everywhere on the page (table, summary, key figures, diagnosis).
+- Rounding: each value is first reduced to 12 significant digits (removing floating-point noise such as 0.8082499999999999 for 0.80825), then rounded **half up** (away from zero) to 4 decimals, as a spreadsheet does: 0.00015 → 0.0002, 0.80825 → 0.8083.
 
 ### 4.4 Summary statistics
 
-For every numeric column the system shows: count, minimum, maximum, mean, median and standard deviation.
+For every metric column (`train_loss`, `val_loss`, and `train_acc`, `val_acc` if present) the system shows: minimum, maximum, mean, median and standard deviation.
 
+- A sentence above the table states the epochs the statistics cover, e.g. *"Computed over epochs 1–60 (60 epochs)."* There is no count column, since every column has one value per epoch.
+- The `epoch` column is not summarized: it is an index, so its statistics have no meaning.
 - The standard deviation is the **sample** standard deviation (divides by *n − 1*). This must be stated in the interface.
 - The system also shows:
   - Best epoch (lowest `val_loss`; the first one if tied) and its `val_acc` (if present).
@@ -111,14 +114,14 @@ The system checks the log for four anomalies. For each one found it shows its na
 
 | Anomaly      | Rule                                                                                                                                                                                                     | Needs        |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| Overfitting  | `val_loss` rises for 5 consecutive epochs right after its minimum (each epoch strictly higher than the one before), while `train_loss` keeps dropping (lower after those 5 epochs than at the minimum). | 6 epochs     |
-| Underfitting | The final `train_loss` is still more than 50 % of the first `train_loss`, or (if accuracy is present) the final `train_acc` is below 0.6.                                                                | 2 epochs     |
+| Overfitting  | The `val_loss` minimum is at least 5 epochs before the end, the final `val_loss` is at least 10 % above that minimum, and `train_loss` is lower at the end than at the minimum (it kept dropping). *(Changed from "5 strict rises in a row": real validation curves are noisy, and the strict rule missed the sample log.)* | 6 epochs     |
+| Underfitting | The final `train_loss` is still more than 50 % of the first `train_loss` (but not higher than the first, which is divergence), or (if accuracy is present) the final `train_acc` is below 0.6.     | 2 epochs     |
 | Divergence   | `train_loss` rises for 5 consecutive epochs (each strictly higher than the one before) anywhere in the log, or the final `train_loss` is higher than the first.                                         | 2 epochs     |
 | Plateau      | Over the last 10 epochs, `val_loss` changed by less than 1 % of its value 10 epochs before the end (in either direction).                                                                                | 11 epochs    |
 
 Example explanations and hints:
 
-- Overfitting: *"val_loss reached its minimum at epoch 20 and rose for the next 5 epochs while train_loss kept dropping."* Hint: stop at the best epoch (early stopping), add regularization or more data.
+- Overfitting: *"val_loss reached its minimum at epoch 26 (0.4115) and rose 69 % by epoch 60, while train_loss kept dropping."* Hint: stop at the best epoch (early stopping), add regularization or more data.
 - Underfitting: *"train_loss only fell from 2.13 to 1.40 (66 % of its first value)."* Hint: train longer, use a bigger model or a higher learning rate.
 - Divergence: *"train_loss rose for 5 consecutive epochs from epoch 12."* Hint: lower the learning rate.
 - Plateau: *"val_loss changed by only 0.4 % over the last 10 epochs (epochs 50–60)."* Hint: stop training, or lower the learning rate.
@@ -142,7 +145,7 @@ Example explanations and hints:
 ### 5.3 Usability and accessibility
 
 - Responsive layout: usable from 360 px (mobile) to large desktop screens.
-- Light and dark theme, following the system preference.
+- Light and dark theme. By default the page follows the system preference; a button in the header switches between the two themes, and the choice is remembered in the browser (`localStorage`) for the next visit. Charts switch colors too.
 - All controls are reachable and usable with the keyboard, have visible focus and accessible labels.
 - Text and chart colors meet WCAG AA contrast; series are distinguishable without relying only on color (e.g. dashed line for validation).
 - Error and status messages are announced to screen readers (live region).
@@ -166,32 +169,32 @@ The project is considered complete when all of the following can be verified:
 
 **Loading & validation**
 
-- [ ] "Load sample" loads `training_log.csv` and shows 60 rows.
-- [ ] Each error type in section 4.2 has a sample file in `data/invalid/` that produces the expected message, with row and column where applicable.
-- [ ] A file larger than 10 MB is rejected without freezing the page.
-- [ ] A CSV cell containing `<img src=x onerror=alert(1)>` is shown as plain text and nothing executes.
+- [x] "Load sample" loads `training_log.csv` and shows 60 rows.
+- [x] Each error type in section 4.2 has a sample file in `data/invalid/` that produces the expected message, with row and column where applicable. *Exception: "file too large" would need a file over 50 MB in the repository, so it is tested with a generated file instead (unit tests and the final review).*
+- [x] A file larger than 50 MB is rejected without freezing the page.
+- [x] A CSV cell containing `<img src=x onerror=alert(1)>` is shown as plain text and nothing executes.
 
 **Table & statistics**
 
-- [ ] The table shows all rows, paginated and sortable.
-- [ ] Mean, median and sample standard deviation match a reference calculation (e.g. a spreadsheet or NumPy) to 4 decimals.
-- [ ] The best epoch and final gaps are correct for `training_log.csv`.
+- [x] The table shows all rows, paginated and sortable.
+- [x] Mean, median and sample standard deviation match a reference calculation (e.g. a spreadsheet, or NumPy / Python `statistics` rounded half up) to 4 decimals. *(Plain NumPy printing can show the 4th decimal one lower on exact ties, because it rounds the binary value: e.g. 0.00015 → 0.0001.)*
+- [x] The best epoch and final gaps are correct for `training_log.csv`.
 
 **Charts**
 
-- [ ] Loss and accuracy charts show both train and validation curves with labelled axes, legend and best-epoch marker; the log-scale toggle works.
+- [x] Loss and accuracy charts show both train and validation curves with labelled axes, legend and best-epoch marker; the log-scale toggle works.
 
 **Diagnosis**
 
-- [ ] Each anomaly has an example log in `data/examples/` that is diagnosed correctly, and a healthy example log shows "No anomalies detected".
-- [ ] The diagnosis of `training_log.csv` is correct.
+- [x] Each anomaly has an example log in `data/examples/` that is diagnosed correctly, and a healthy example log shows "No anomalies detected".
+- [x] The diagnosis of `training_log.csv` is correct.
 
 **Quality**
 
-- [ ] No errors or warnings in the browser console during normal use.
-- [ ] No network requests other than the pinned library and the app's own files (checked in the Network tab).
-- [ ] The unit tests page passes.
-- [ ] The code is organized in modules and commented.
+- [x] No errors or warnings in the browser console during normal use.
+- [x] No network requests other than the pinned library and the app's own files (checked in the Network tab).
+- [x] The unit tests page passes.
+- [x] The code is organized in modules and commented.
 
 ## 7. AI implementation process
 

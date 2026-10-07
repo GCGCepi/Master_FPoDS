@@ -33,14 +33,14 @@ Files are created in the task that first needs them (`tasks_claude.md` lists whi
 
 The page structure only. It contains no inline scripts and no inline styles. It has:
 
-- a header (one single page, no tabs),
+- a header (one single page, no tabs) with the light/dark theme button,
 - a file loader (picker + drop zone + "Load sample"), a message area (`aria-live`),
 - a table section, a summary section, a charts section and a diagnosis section,
 - the Chart.js `<script>` tag (added in the charts task), then `<script type="module" src="js/main.js">`.
 
 ### `styles.css`
 
-Layout, typography, colors, and the light/dark theme (`prefers-color-scheme`). Colors are defined once as CSS variables. Responsive down to 360 px.
+Layout, typography, colors, and the light/dark theme. Colors are defined as CSS variables; the dark values apply under `prefers-color-scheme: dark` unless `<html data-theme="light">`, or when `<html data-theme="dark">` (set by the theme button). Responsive down to 360 px.
 
 ### `js/main.js`
 
@@ -48,6 +48,7 @@ The only module that connects everything. It:
 
 - holds the application state in one object (`state.log`),
 - registers all event listeners with `addEventListener`,
+- handles the theme button: sets `data-theme` on `<html>` and remembers the choice in `localStorage`,
 - calls the pure modules for logic, and `ui.js` / `charts.js` to display the results.
 
 ### `js/csv.js` — pure, no DOM
@@ -59,7 +60,8 @@ The only module that connects everything. It:
 ### `js/stats.js` — pure, no DOM
 
 - `describe(values)` → `{ count, min, max, mean, median, std }` (sample std, n − 1)
-- `summarizeColumns(columns)` → `describe` for every log column
+- `formatFourDecimals(value)` → string with 4 decimals, rounded half up after 12 significant digits (spec §4.3); used by `ui.js` and the diagnosis texts
+- `summarizeColumns(columns)` → `describe` for every metric column (all but `epoch`, which is only an index)
 - `analyzeLog(columns, hasAccuracy)` → `{ bestEpoch, bestValLoss, bestValAcc, lossGap, accGap }`
 - `diagnose(columns, hasAccuracy)` → a list of findings `{ anomaly, epochs, explanation, hint }`, plus the checks skipped for lack of epochs (rules in spec §4.6)
 

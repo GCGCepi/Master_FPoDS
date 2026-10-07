@@ -3,8 +3,8 @@
 // cell like <img onerror=...> is shown as text and never runs.
 
 import { isNumeric } from './csv.js';
+import { formatFourDecimals } from './stats.js';
 
-const DECIMALS = 4;
 const MAX_ERRORS_SHOWN = 10; // spec §4.2
 const PAGE_SIZE = 50; // spec §4.3
 
@@ -58,10 +58,10 @@ export function showErrors(container, title, errors) {
  * @param {string} value - raw cell text
  * @returns {string} text to display
  */
-export function formatCell(value) {
+function formatCell(value) {
   if (!isNumeric(value)) return value;
   const number = Number(value);
-  return Number.isInteger(number) ? String(number) : number.toFixed(DECIMALS);
+  return Number.isInteger(number) ? String(number) : formatFourDecimals(number);
 }
 
 /**
@@ -69,8 +69,51 @@ export function formatCell(value) {
  * @param {number} value - number to show
  * @returns {string} text to display
  */
-export function formatNumber(value) {
-  return Number.isFinite(value) ? value.toFixed(DECIMALS) : '—';
+function formatNumber(value) {
+  return Number.isFinite(value) ? formatFourDecimals(value) : '—';
+}
+
+/**
+ * Shows the diagnosis: one block per anomaly found (name, epochs,
+ * explanation and hint), or "No anomalies detected", plus a note for each
+ * rule that was skipped because the log is too short.
+ * @param {HTMLElement} container - element that will hold the diagnosis
+ * @param {{findings: {anomaly: string, epochs: number[], explanation: string, hint: string}[], skipped: string[]}} diagnosis - output of diagnose
+ * @returns {void}
+ */
+export function renderDiagnosis(container, diagnosis) {
+  const blocks = [];
+
+  if (diagnosis.findings.length === 0) {
+    const ok = document.createElement('p');
+    ok.className = 'diagnosis-ok';
+    // The ✓ / ⚠ symbols mark the result without relying on color alone.
+    ok.textContent = '✓ No anomalies detected. The curves show none of the four patterns checked: overfitting, underfitting, divergence and plateau.';
+    blocks.push(ok);
+  }
+
+  for (const finding of diagnosis.findings) {
+    const block = document.createElement('div');
+    block.className = 'finding';
+    const title = document.createElement('h3');
+    const [from, to] = finding.epochs;
+    title.textContent = `⚠ ${finding.anomaly} (epochs ${from}–${to})`;
+    const explanation = document.createElement('p');
+    explanation.textContent = finding.explanation;
+    const hint = document.createElement('p');
+    hint.className = 'hint';
+    hint.textContent = `What to try: ${finding.hint}`;
+    block.append(title, explanation, hint);
+    blocks.push(block);
+  }
+
+  for (const text of diagnosis.skipped) {
+    const note = document.createElement('p');
+    note.className = 'note';
+    note.textContent = text;
+    blocks.push(note);
+  }
+  container.replaceChildren(...blocks);
 }
 
 /**
@@ -107,15 +150,21 @@ export function renderKeyFigures(container, analysis) {
 }
 
 /**
- * Draws the summary statistics as a table with one row per log column.
+ * Draws the summary statistics as a table with one row per metric column,
+ * after a sentence saying which epochs they cover.
  * @param {HTMLElement} container - element that will hold the table
  * @param {{name: string, stats: {count: number, min: number, max: number, mean: number, median: number, std: number}}[]} summaries - output of summarizeColumns
+ * @param {number[]} epochs - the epoch column of the log
  * @returns {void}
  */
-export function renderSummary(container, summaries) {
+export function renderSummary(container, summaries, epochs) {
+  const range = document.createElement('p');
+  const count = epochs.length === 1 ? '1 epoch' : `${epochs.length} epochs`;
+  range.textContent = `Computed over epochs ${epochs[0]}–${epochs[epochs.length - 1]} (${count}).`;
+
   const table = document.createElement('table');
   const headerRow = table.createTHead().insertRow();
-  for (const label of ['Column', 'Count', 'Min', 'Max', 'Mean', 'Median', 'Std (n − 1)']) {
+  for (const label of ['Column', 'Min', 'Max', 'Mean', 'Median', 'Std (n − 1)']) {
     const th = document.createElement('th');
     th.scope = 'col';
     th.textContent = label;
@@ -129,7 +178,6 @@ export function renderSummary(container, summaries) {
     nameCell.scope = 'row';
     nameCell.textContent = name;
     tr.appendChild(nameCell);
-    tr.insertCell().textContent = String(stats.count);
     for (const value of [stats.min, stats.max, stats.mean, stats.median, stats.std]) {
       tr.insertCell().textContent = formatNumber(value);
     }
@@ -142,7 +190,7 @@ export function renderSummary(container, summaries) {
   const note = document.createElement('p');
   note.className = 'note';
   note.textContent = 'Std is the sample standard deviation: it divides by n − 1, not n.';
-  container.replaceChildren(wrapper, note);
+  container.replaceChildren(range, wrapper, note);
 }
 
 /**
@@ -179,7 +227,7 @@ function compareCells(a, b) {
  * @param {boolean} ascending - true for A→Z / small→large
  * @returns {string[][]} sorted copy
  */
-export function sortRows(rows, col, ascending) {
+function sortRows(rows, col, ascending) {
   const sign = ascending ? 1 : -1;
   return [...rows].sort((a, b) => sign * compareCells(a[col], b[col]));
 }

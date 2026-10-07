@@ -16,8 +16,12 @@
   --series-best: #15803d;
 }
 
+/* Dark theme. It applies when the system is in dark mode (unless the user
+   chose light with the theme button), or when the user chose dark. CSS
+   cannot share one block between a media query and a selector, so the
+   same values appear twice: keep both blocks identical. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #15181d;
     --surface: #1e2229;
     --text: #e6e8eb;
@@ -29,6 +33,24 @@
     --series-val: #fb923c;
     --series-best: #4ade80;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #15181d;
+  --surface: #1e2229;
+  --text: #e6e8eb;
+  --muted: #a9b1bd;
+  --border: #3b424d;
+  --accent: #7cb2f0;
+  --error: #ff8f86;
+  --series-train: #7cb2f0;
+  --series-val: #fb923c;
+  --series-best: #4ade80;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* Base layout */
@@ -43,8 +65,53 @@ body {
   color: var(--text);
 }
 
+a {
+  color: var(--accent);
+}
+
+/* Title on the left, theme button on the right (wraps on narrow screens). */
+.header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
 .site-header h1 {
   margin-bottom: 0;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin-top: 21px; /* lines up with the h1 text */
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Line icons drawn with the button's text color. */
+.theme-toggle .icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Only the icon named in data-icon is shown. */
+.theme-toggle[data-icon="moon"] .icon-sun,
+.theme-toggle[data-icon="sun"] .icon-moon {
+  display: none;
 }
 
 .subtitle {
@@ -196,6 +263,55 @@ th[scope="row"] {
   }
 }
 
+/* Diagnosis: the colored side bar adds to the ✓ / ⚠ symbols in the text. */
+
+.finding,
+.diagnosis-ok {
+  border-left: 4px solid var(--series-val);
+  background: var(--bg);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+}
+
+.diagnosis-ok {
+  border-left-color: var(--series-best);
+}
+
+.finding h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.finding p {
+  margin: 4px 0;
+}
+
+.finding .hint {
+  color: var(--muted);
+}
+
+/* Unit test page: ✓ / ✗ mark each result as well as the color. */
+
+.test-results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.test-results li {
+  padding: 2px 0;
+}
+
+.test-pass {
+  color: var(--series-best);
+}
+
+.test-fail {
+  color: var(--error);
+  font-weight: 600;
+}
+
 /* Key figures: label and value on one line, wrapping on narrow screens. */
 .key-figures {
   display: grid;
@@ -302,6 +418,11 @@ th[aria-sort="descending"] .sort-button::after {
 
   .site-header h1 {
     font-size: 1.5rem;
+  }
+
+  /* On phones the button wraps under the title, so no top offset is needed. */
+  .theme-toggle {
+    margin-top: 8px;
   }
 
   .card {

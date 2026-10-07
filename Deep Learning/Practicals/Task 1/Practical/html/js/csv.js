@@ -1,11 +1,12 @@
 // CSV parsing and validation. Pure functions: no DOM access, so they can be
 // unit tested.
 
-export const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB (spec §3.2)
+const MAX_FILE_MB = 50; // spec §3.2
+export const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 export const MAX_ROWS = 100000;
-export const MIN_EPOCHS = 2; // spec §3.1
-export const REQUIRED_COLUMNS = ['epoch', 'train_loss', 'val_loss'];
-export const ACCURACY_COLUMNS = ['train_acc', 'val_acc']; // optional, but both or none
+const MIN_EPOCHS = 2; // spec §3.1
+const REQUIRED_COLUMNS = ['epoch', 'train_loss', 'val_loss'];
+const ACCURACY_COLUMNS = ['train_acc', 'val_acc']; // optional, but both or none
 
 // A plain decimal number: "3", "-0.5", ".5", "1e-3". Rejects "0x1A", "Infinity", "".
 const NUMBER_PATTERN = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
@@ -33,7 +34,7 @@ export function checkFile(name, size) {
   }
   if (size > MAX_FILE_BYTES) {
     const megabytes = (size / (1024 * 1024)).toFixed(1);
-    errors.push(`The file is ${megabytes} MB, but the maximum size is 10 MB. Remove some rows or columns and try again.`);
+    errors.push(`The file is ${megabytes} MB, but the maximum size is ${MAX_FILE_MB} MB. Remove some rows or columns and try again.`);
   }
   return errors;
 }
