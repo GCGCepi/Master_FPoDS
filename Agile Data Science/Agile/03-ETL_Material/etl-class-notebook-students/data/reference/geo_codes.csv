@@ -1,0 +1,42 @@
+geo,country,is_aggregate
+AL,Albania,false
+AT,Austria,false
+BE,Belgium,false
+BG,Bulgaria,false
+CH,Switzerland,false
+CY,Cyprus,false
+CZ,Czech Republic,false
+DE,Germany,false
+DK,Denmark,false
+EA17,Euro area (17 countries),true
+EA18,Euro area (18 countries),true
+EE,Estonia,false
+EL,Greece,false
+ES,Spain,false
+EU27,European Union (27 countries),true
+EU28,European Union (28 countries),true
+FI,Finland,false
+FR,France,false
+HR,Croatia,false
+HU,Hungary,false
+IE,Ireland,false
+IS,Iceland,false
+IT,Italy,false
+JP,Japan,false
+LI,Liechtenstein,false
+LT,Lithuania,false
+LU,Luxembourg,false
+LV,Latvia,false
+MK,North Macedonia,false
+MT,Malta,false
+NL,Netherlands,false
+NO,Norway,false
+PL,Poland,false
+PT,Portugal,false
+RO,Romania,false
+SE,Sweden,false
+SI,Slovenia,false
+SK,Slovakia,false
+TR,Turkey,false
+UK,United Kingdom,false
+US,United States,false
