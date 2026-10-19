@@ -1,2 +1,0 @@
-pandas==3.0.6
-pyarrow=26.0.0
