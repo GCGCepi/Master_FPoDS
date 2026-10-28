@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV Data Visualizer</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Chart.js loaded from CDN, as defined in architecture.md -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>CSV Data Visualizer</h1>
+    <p class="subtitle">Load a CSV file (columns: Any, Lloc, Sexe, Valor) to see a table, summary and chart.</p>
+  </header>
+
+  <main>
+    <!-- File selector -->
+    <section class="card" id="controls">
+      <label for="csvFile" class="file-label">Select CSV file</label>
+      <input type="file" id="csvFile" accept=".csv,text/csv">
+    </section>
+
+    <!-- Status / error messages -->
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <!-- Summary of computed values -->
+    <section class="card summary hidden" id="summarySection">
+      <h2>Summary</h2>
+      <div class="summary-grid" id="summaryGrid"></div>
+    </section>
+
+    <!-- Data table -->
+    <section class="card hidden" id="tableSection">
+      <h2>Data</h2>
+      <div class="table-wrapper">
+        <table id="dataTable"></table>
+      </div>
+    </section>
+
+    <!-- Chart container -->
+    <section class="card hidden" id="chartSection">
+      <h2>Chart — total Valor by Lloc and Sexe</h2>
+      <div class="chart-wrapper">
+        <canvas id="chart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
