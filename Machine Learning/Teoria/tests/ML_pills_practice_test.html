@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML Pills Practice Test</title>
+<style>
+:root{
+  --bg:#f4f6f9; --card:#ffffff; --qbg:#e8f1f8; --qborder:#c9dceb; --text:#1d2733; --muted:#5b6b7c;
+  --accent:#0f6cbf; --accent-soft:#dbeafa; --ok:#1f7a3a; --ok-bg:#e3f4e8; --bad:#b3261e; --bad-bg:#fbe7e5;
+  --warn:#8a5a00; --warn-bg:#fff4d6; --line:#d8e0e8; --chip:#eef2f6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --card:#19212a; --qbg:#1d2a37; --qborder:#2d4153; --text:#e3e9ef; --muted:#9aabbb;
+    --accent:#5aa8f0; --accent-soft:#1f3347; --ok:#6fd38f; --ok-bg:#16301f; --bad:#ff8a80; --bad-bg:#3a1c1a;
+    --warn:#ffcf66; --warn-bg:#352a10; --line:#2b3642; --chip:#232e39;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --card:#19212a; --qbg:#1d2a37; --qborder:#2d4153; --text:#e3e9ef; --muted:#9aabbb;
+  --accent:#5aa8f0; --accent-soft:#1f3347; --ok:#6fd38f; --ok-bg:#16301f; --bad:#ff8a80; --bad-bg:#3a1c1a;
+  --warn:#ffcf66; --warn-bg:#352a10; --line:#2b3642; --chip:#232e39;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 6px}
+h1{font-size:20px;margin:0}
+.sub{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 10px;scrollbar-width:thin}
+.tab{border:1px solid var(--line);background:var(--chip);color:var(--text);padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:13px}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab .sc{font-weight:600;margin-left:6px;opacity:.9}
+.themebtn{border:1px solid var(--line);background:var(--chip);color:var(--text);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:13px}
+main{padding:20px 0 60px}
+.intro{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:18px;font-size:14px}
+.intro table{border-collapse:collapse;margin-top:6px}
+.intro td,.intro th{border:1px solid var(--line);padding:3px 10px;text-align:center}
+section.pill{display:none}
+section.pill.show{display:block}
+.pillhead{margin:8px 0 12px}
+.pillhead h2{margin:0;font-size:19px}
+.pillhead .src{color:var(--muted);font-size:13px}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.summary table{width:100%;border-collapse:collapse;font-size:14px}
+.summary th{width:190px;text-align:right;background:var(--chip);padding:5px 10px;vertical-align:top;font-weight:600}
+.summary td{padding:5px 10px;border-bottom:1px solid var(--line)}
+.summary h3{margin:0;color:var(--accent);font-size:17px}
+.good{color:var(--ok);font-weight:600}.badc{color:var(--bad);font-weight:600}.under{color:var(--warn);font-weight:600}
+.q{display:flex;gap:12px;margin-bottom:18px}
+.qinfo{flex:0 0 96px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;height:max-content}
+.qinfo b{color:var(--accent);font-size:13px}
+.qinfo .pts{margin-top:4px}
+.qbody{flex:1;background:var(--qbg);border:1px solid var(--qborder);border-radius:8px;padding:14px 16px;min-width:0}
+.q.correct .qbody{border-left:5px solid var(--ok)}
+.q.wrong .qbody{border-left:5px solid var(--bad)}
+.q.blank .qbody{border-left:5px solid var(--warn)}
+.qtext{margin-bottom:10px}
+.badge{display:inline-block;font-size:11px;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.hint{font-size:13px;color:var(--muted);margin-bottom:4px}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:4px 6px;border-radius:6px;cursor:pointer}
+.opt input{margin-top:4px}
+.opt.isright{background:var(--ok-bg)}
+.opt.iswrong{background:var(--bad-bg)}
+.cert{margin-top:12px;font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.cert label{cursor:pointer;display:flex;gap:4px;align-items:center}
+.verdict{margin-top:10px;font-size:14px;font-weight:600}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--bad)}.verdict.blank{color:var(--warn)}
+details{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:14px}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details[data-wrong="1"] summary{color:var(--bad)}
+details p{margin:8px 0 2px}
+code,.m{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--chip);padding:0 4px;border-radius:3px}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin:6px 0 28px;flex-wrap:wrap}
+button.primary{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer}
+.warnmsg{color:var(--warn);font-size:13px;align-self:center}
+.overall{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:18px}
+.overall h3{margin:0 0 8px;font-size:16px}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ovcell{background:var(--chip);border-radius:8px;padding:8px 10px;font-size:13px}
+.ovcell b{display:block;font-size:15px}
+@media (max-width:600px){
+  .q{flex-direction:column;gap:4px}
+  .qinfo{flex:none;display:flex;gap:10px;align-items:center;height:auto}
+  .qinfo .pts{margin:0}
+  .summary th{width:120px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Machine Learning — Pills practice test</h1>
+        <div class="sub">Aprenentatge Automàtic 26/27 · Pills 1–8 · certainty-based marking</div>
+      </div>
+      <button class="themebtn" id="themeBtn" title="Toggle theme">◐ Theme</button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    Answer each question and choose a <b>certainty level</b>, then press <b>Submit</b> at the end of the pill. Scoring works like the Moodle quizzes (QBC/CBM):
+    <table>
+      <tr><th></th><th>C=1 (unsure, &lt;67%)</th><th>C=2 (mid, &gt;67%)</th><th>C=3 (quite sure, &gt;80%)</th></tr>
+      <tr><td>Correct</td><td>+1</td><td>+2</td><td>+3</td></tr>
+      <tr><td>Wrong</td><td>0</td><td>−2</td><td>−6</td></tr>
+    </table>
+    <div style="margin-top:6px">Multi-select questions count as correct only if you tick exactly the right set. Unanswered questions score 0. After grading, open <b>“Why?”</b> under any question for the explanation. Questions tagged <span class="badge">Real quiz</span> come from your Moodle quizzes.</div>
+  </div>
+  <div id="overall" class="overall" style="display:none"></div>
+  <div id="sections"></div>
+</main>
+
+<script>
+const PILLS = [
+{ id:1, title:"Pill 1 · First steps in Machine Learning", src:"pill1_first_steps_in_machine_learning_student.ipynb", qs:[
+ {t:"tf", q:"When using machine learning techniques, the accuracy reported in the training set is a good indicator of the performance we will obtain when applying the method in practice.", a:false, orig:true,
+  why:"Training accuracy is optimistic. In the notebook, a 1-NN classifier trained and evaluated on the same churn data reaches ~100% accuracy (every training point is its own nearest neighbour), but on a held-out 30% test split the accuracy drops to ~0.87. To estimate production performance you need data that was <b>not</b> used for fitting."},
+ {t:"single", q:"You fit a 1-nearest-neighbour classifier on a dataset and then predict that same dataset (no duplicated points with different labels). What training accuracy do you expect?", o:["About 0.87, the same as on the test set","Essentially 1.0 (100%)","About 0.5, like random guessing","It cannot be determined without a test set"], a:1,
+  why:"Each training sample's nearest neighbour is itself (distance 0), so it gets its own label back → ~100% training accuracy. This is exactly the “I don't know Rick, it looks fake” moment in the notebook: a perfect training score says nothing about generalization."},
+ {t:"tf", q:"In scikit-learn, the feature matrix <span class='m'>X</span> is expected to have shape <span class='m'>[n_features, n_samples]</span>.", a:false,
+  why:"The notebook states that input data is a NumPy array of size <span class='m'>[n_samples, n_features]</span>: one row per sample (N), one column per feature (d). The label vector <span class='m'>y</span> has length N."},
+ {t:"tf", q:"When standardizing data, the scaler should be fitted only on the training set and then used to transform both the training and the test sets.", a:true,
+  why:"In the “snooping” cell, <span class='m'>scaler.fit(X_train)</span> is used and then <span class='m'>scaler.transform(X_test)</span>. Fitting the scaler on all data would leak information (mean/std) from the test set into training, giving an over-optimistic estimate."},
+ {t:"single", q:"Why does the notebook repeat the train/test split with several <span class='m'>random_state</span> values and average the accuracies?", o:["To increase the size of the training set","Because the test accuracy depends on the particular split (it is a random variable), so averaging gives a more reliable estimate","To reduce the training time of the classifier","Because the decision tree needs several seeds to converge"], a:1,
+  why:"“This result is ok, but how consistent is it? Maybe we have been lucky with the train-test partition.” Repeating with r_state = [0,1,2,3,4,5,42,…] and reporting the mean (≈0.869 for 1-NN) and a boxplot shows the variability of the estimate."},
+ {t:"multi", q:"According to the notebook, which of the following are <b>advantages of feature extraction</b> over using raw data?", o:["Lower dimensionality and complexity","No domain-specific knowledge is required","It attempts to capture discriminant information in the data","It is guaranteed to improve the accuracy"], a:[0,2],
+  why:"Feature extraction: advantages = captures discriminant information, lower dimensionality/complexity; drawback = <b>requires</b> domain knowledge. “No domain knowledge required” is the advantage of <i>raw data</i>. Nothing guarantees an accuracy improvement."},
+ {t:"tf", q:"Model selection is not the method to use for setting hyper-parameters in a model, for example deciding the value of the number of neighbours in nearest-neighbours.", a:false, orig:true,
+  why:"In “Model selection (I)” the notebook compares 1-NN, 3-NN and a decision tree. Choosing between alternatives — including different values of k — <b>is</b> model selection, done using a validation set."},
+ {t:"tf", q:"If a previously selected model achieves worse performance than another method in a test set, we will change the method to the best performant one.", a:false, orig:true,
+  why:"The test set is only used to estimate the expected performance of the model you already selected (with the validation set). Using test results to change your choice turns the test set into a validation set and the final estimate becomes biased (data snooping)."}
+]},
+{ id:2, title:"Pill 2 · A quick and dirty tour about data", src:"pill2_about_data_student.ipynb", qs:[
+ {t:"tf", q:"Dropping records (examples) with missing data is, in general, a bad idea.", a:false, orig:true,
+  why:"Deletion is one of the three accepted families of strategies (deletion, single substitution, model-based). The notebook warns that completely removing samples “can be dangerous <b>if the data set size is small</b>” — not that it is a bad idea in general."},
+ {t:"single", q:"Following the notebook's definition of dummy variables, a categorical feature with K possible values is recoded into…", o:["K new binary features","K − 1 new binary features","log₂(K) new binary features","A single integer feature with values 1…K"], a:1,
+  why:"“Dummy variables recode one feature into K−1 new features.” E.g. colour ∈ {red, blue, green} → <span class='m'>is_green?</span>, <span class='m'>is_blue?</span>; red is the case where both are 0. (Note: <span class='m'>pd.get_dummies</span> by default creates K columns.)"},
+ {t:"tf", q:"In a dataset with many outliers, it is advisable to use standardization as a normalization technique.", a:false, orig:true,
+  why:"“All normalization techniques are heavily influenced by outliers” — the mean and standard deviation (and min/max) get dragged by extreme values. The notebook instead proposes percentile-based scaling: x̃ = (x − prc(x,θ)) / (prc(x,100−θ) − prc(x,θ)), or detecting and removing outliers first."},
+ {t:"tf", q:"We cannot capture non-linear behaviour using a linear regressor.", a:false,
+  why:"With <b>interaction/power features</b> you can: the notebook expands x into {x, x², x³, x⁴} and fits a plain <span class='m'>LinearRegression</span>, which then follows the curve x² + 10·sin(3x). The model is linear in the parameters, not in the original input."},
+ {t:"tf", q:"When using the hashing trick, the distance between samples in the original space is preserved or quasi-preserved.", a:false, orig:true,
+  why:"The notebook shows a = 1.0 and b = 1.0000001 (distance 1e-7) ending up 45 apart in hashed space, while a and c = 109000 (distance 108999) end up only 26 apart. “Metric notion in the original space disappears in the hashed space.”"},
+ {t:"multi", q:"Which of the following are listed in the notebook as <b>advantages</b> of the hashing trick?", o:["Vectors are usually very sparse and can be stored efficiently","No dictionaries need to be prepared, so it is real-time / online friendly","It preserves the metric of the original space","The dimensionality of the embedding does not need to be fixed in advance","The distribution of hashed data tends to the uniform distribution"], a:[0,1,4],
+  why:"Advantages: sparse vectors, no dictionary needed (online-friendly), collisions can be reduced with better hashing (e.g. Bloom filters), hashed data tends to uniform. Disadvantages: the metric disappears, and you <b>must</b> set the embedding dimensionality in advance."},
+ {t:"tf", q:"In a distance-based classification algorithm, adding random features generally worsens its performance.", a:true, orig:true,
+  why:"Curse of dimensionality: adding 1000 random Gaussian features to the digits data drops a 10-NN classifier to ~0.14 test accuracy. The noise from irrelevant dimensions swamps the signal in the informative ones, so neighbours become effectively random."},
+ {t:"tf", q:"For a d-dimensional standard Gaussian (zero mean, identity covariance) with large d, a sample drawn at random will be close to the mean with high probability.", a:false,
+  why:"In high dimensions most of the mass of a Gaussian is not near the mean but in an increasingly distant “shell” around it (the hyper-orange peel: most of the volume is in the skin). The notebook's histogram of distances to the mean illustrates this as d grows."}
+]},
+{ id:3, title:"Pill 3 · Performance measures", src:"pill3_performance_measures_student.ipynb", qs:[
+ {t:"single", q:"The number of non-churn samples predicted as churn (we consider churn to be the desired target) is called", o:["TP","FP","TN","FN"], a:1, orig:true,
+  why:"Predicted positive (churn) but actually negative (non-churn) → <b>False Positive</b>."},
+ {t:"single", q:"Of all the customers the classifier predicts as <b>non-churn</b>, what proportion really do not churn? (churn = positive class)", o:["Specificity","Negative predictive value","Recall","Precision"], a:1,
+  why:"NPV = TN / (TN + FN) = TN / predicted negatives (row-wise metric). Specificity = TN / (TN + FP) is the column-wise one: of the real negatives, how many we got right."},
+ {t:"single", q:"The 3-NN churn classifier in the notebook gives TP = 34, FP = 43, FN = 109, TN = 814. What is its <b>recall</b> (sensitivity) on churn?", o:["≈ 0.24","≈ 0.44","≈ 0.95","≈ 0.85"], a:0,
+  why:"Recall = TP / (TP + FN) = 34 / (34 + 109) = 34 / 143 ≈ 0.24. (0.44 is the precision 34/77, 0.95 is the specificity 814/857, 0.85 the accuracy.)"},
+ {t:"tf", q:"That same 3-NN classifier has accuracy 0.85 on the test set, so it is good at detecting customers who will churn.", a:false,
+  why:"The data is unbalanced: 857 of 1000 test samples are non-churn, so always predicting “no churn” already gives 0.857 accuracy. Its recall on churn is only 0.24. On unbalanced data accuracy is ill-informative; look at sensitivity, precision, etc."},
+ {t:"tf", q:"Leave-one-out can be seen as a particular case of K-fold cross-validation where K equals the number of samples in the data set.", a:true,
+  why:"Straight from the notebook: “Leave one out can be seen as a particular instance of K-fold cross validation with K equal to the cardinality of the data set.” It is computationally expensive since it trains N classifiers."},
+ {t:"single", q:"In the case of a perfect classification score, what are the values of the TPR and FPR?", o:["TPR = 1.0, FPR = 1.0","TPR = 1.0, FPR = 0.0","TPR = 0.0, FPR = 1.0","There is not enough information to answer"], a:1, orig:true,
+  why:"Perfect classifier: no false negatives → TPR = TP/(TP+FN) = 1; no false positives → FPR = FP/(FP+TN) = 0. That is the top-left corner of the ROC curve (AUC = 1)."},
+ {t:"single", q:"A classifier outputs P(x ∈ positive) and decides positive if it exceeds a threshold. What happens when you <b>lower</b> the threshold?", o:["More samples are predicted positive: TP and FP increase, so recall goes up and specificity goes down","Fewer samples are predicted positive: recall goes down and specificity goes up","Only the accuracy changes; the confusion matrix stays the same","TP and TN both increase"], a:0,
+  why:"A lower threshold labels more samples as positive, catching more real positives (TP↑, recall↑) but also more negatives (FP↑, specificity↓). Sweeping the threshold traces the ROC curve; the chosen threshold is the <b>operating point</b>."},
+ {t:"multi", q:"Which of the following are listed in the notebook as ways of dealing with <b>unbalanced</b> datasets?", o:["Under-sample the majority class","Over-sample the minority class (e.g. SMOTE)","Use class weights (cost-sensitive classification)","Standardize all the features","Change the performance metric"], a:[0,1,2,4],
+  why:"Listed: under-sampling the majority, over-sampling the minority (SMOTE), class weights, changing the metric, and splitting the majority class into subclasses with several classifiers + aggregation. Standardization is a preprocessing step that does not address class imbalance."}
+]},
+{ id:4, title:"Pill 4 · A gentle introduction to supervised learning", src:"pill4 - A gentle introduction to supervised machine learning_student.ipynb", qs:[
+ {t:"multi", q:"Any learning algorithm has to define at least three components. Which are they?", o:["The model class / hypothesis space","The problem model (e.g. minimization of an error function)","The learning algorithm (optimization / search method)","A held-out test set","A regularization term"], a:[0,1,2],
+  why:"The notebook dissects learning into: <b>model class</b> (family of functions, e.g. linear models), <b>problem model</b> (encodes the desired properties, typically an error function to minimize) and <b>learning algorithm</b> (e.g. gradient descent). A test set and regularization are not part of this minimal definition."},
+ {t:"tf", q:"The 0-1 loss takes value 1 when a training sample is incorrectly classified and 0 otherwise.", a:true,
+  why:"“In classification the ideal error function is the 0-1 loss… one is only irritated by one unit of irritation when one sample is misclassified.”"},
+ {t:"single", q:"In steepest (gradient) descent, which update rule is used?", o:["w<sup>t</sup> = w<sup>t−1</sup> + η ∇<sub>w</sub>L","w<sup>t</sup> = w<sup>t−1</sup> − η ∇<sub>w</sub>L","w<sup>t</sup> = w<sup>t−1</sup> − η L(w<sup>t−1</sup>)","w<sup>t</sup> = (X̃X̃<sup>T</sup>)<sup>−1</sup>X̃y"], a:1,
+  why:"The generic update is w<sup>t</sup> = w<sup>t−1</sup> + η Δw, and in steepest descent the direction is Δw = −∇<sub>w</sub>L. The last option is the closed-form solution, not an iterative step."},
+ {t:"single", q:"With the notebook's notation (each sample is a column of X̃, ŷ = X̃<sup>T</sup>w), what is the gradient of the mean squared error L = (1/N)(y − X̃<sup>T</sup>w)<sup>T</sup>(y − X̃<sup>T</sup>w)?", o:["−(2/N) X̃ (y − X̃<sup>T</sup>w)","(2/N) X̃<sup>T</sup> (y − X̃w)","−(1/N) (y − X̃<sup>T</sup>w)","(2/N) (y − X̃<sup>T</sup>w)<sup>T</sup>(y − X̃<sup>T</sup>w)"], a:0,
+  why:"∇<sub>w</sub>L = −(2/N) X̃ (y − X̃<sup>T</sup>w). This is what the gradient descent code implements: <span class='m'>grad = -2/N * x_augmented @ residual</span>."},
+ {t:"single", q:"Setting the gradient to zero gives the closed-form least-squares solution. Which one (same notation)?", o:["w = (X̃<sup>T</sup>X̃)<sup>−1</sup> y","w = (X̃X̃<sup>T</sup>)<sup>−1</sup> X̃ y","w = X̃<sup>−1</sup> y","w = X̃ y / N"], a:1,
+  why:"From −(2/N) X̃(y − X̃<sup>T</sup>w) = 0 → X̃X̃<sup>T</sup>w = X̃y → w = (X̃X̃<sup>T</sup>)<sup>−1</sup>X̃y (in practice computed with <span class='m'>np.linalg.pinv</span>)."},
+ {t:"tf", q:"For very large datasets the analytic (closed-form) solution is preferable to iterative methods, because no iterations are required.", a:false,
+  why:"Comparison table: the analytic solution has a large computational cost (naive matrix inversion is O(n³)). Iterative methods need a learning rate and may be slow, but each iteration is cheap and they <b>can be used with large data sizes</b>."},
+ {t:"tf", q:"According to the notebook, accuracy (predictive power) usually trades off with the other desirable properties: simplicity, speed and interpretability.", a:true,
+  why:"“The main goal of any learning process is to achieve the maximum predictive power… there are three other important properties: simplicity, speed, interpretability. It happens that accuracy trades off with all the rest.”"},
+ {t:"tf", q:"Running gradient descent with η = 0.01 for only 50 iterations from w = (0,0) on the toy problem (true w* = (0.5, 1.2)) gives w ≈ (0.285, 1.233): the method has not fully converged yet, and the intercept is the parameter furthest from the optimum.", a:true,
+  why:"The quiz cell reports a distance of ≈ 0.218 between w* and the obtained w. The slope (1.233 vs 1.2) is nearly right, but the intercept (0.285 vs 0.5) is still far: with a small step and few iterations GD has not converged. The follow-up exercise uses η = 0.1 and 100 iterations to speed it up."}
+]},
+{ id:5, title:"Pill 5 · Feasibility of the learning problem", src:"pill5Feasibility.pdf · Handout_feasibility.pdf", qs:[
+ {t:"single", q:"For the bin experiment (µ = fraction of red marbles in the bin, ν = fraction in a sample of N), Hoeffding's inequality states:", o:["P[|ν − µ| > ε] ≤ 2e<sup>−2ε²N</sup>","P[|ν − µ| > ε] ≤ 2|H|e<sup>−2ε²N</sup>","P[|ν − µ| > ε] ≥ 1 − e<sup>−εN</sup>","P[|ν − µ| > ε] ≤ e<sup>−N/ε</sup>"], a:0,
+  why:"P[|ν − µ| > ε] ≤ 2e<sup>−2ε²N</sup>: in a big sample ν is probably close to µ, so “µ = ν” is Probably Approximately Correct. The 2|H| version is the union-bound extension to a finite hypothesis set."},
+ {t:"tf", q:"The Hoeffding bound depends on the unknown value of µ.", a:false,
+  why:"The slides stress: the bound is valid for all N and ε, and it <b>does not depend on µ</b>. There is a trade-off between N, ε and the bound."},
+ {t:"tf", q:"Having a large number of samples implies that the out-of-sample error will tend to zero.", a:false, orig:true,
+  why:"Many samples only guarantee E<sub>out</sub> ≈ E<sub>in</sub>. Learning also requires E<sub>in</sub> ≈ 0, which is the job of the model and the learning algorithm. If the hypothesis class is too simple, E<sub>in</sub> (and so E<sub>out</sub>) can stay high whatever N is."},
+ {t:"single", q:"Learning (E<sub>out</sub> ≈ 0) is split into two questions. Which one is the role of the <b>model and the learning algorithm</b>?", o:["Can we make sure E<sub>out</sub> is close enough to E<sub>in</sub>?","Can we make E<sub>in</sub> small enough?","Can we make the hypothesis set infinite?","Can we make the input distribution P(x) uniform?"], a:1,
+  why:"Question 1 (E<sub>out</sub> ≈ E<sub>in</sub>) is handled by Hoeffding and its variants. Question 2 (E<sub>in</sub> ≈ 0) is the role of the model and the learning algorithm."},
+ {t:"tf", q:"Using the union bound over a finite hypothesis set gives P[max<sub>h∈H</sub> |E<sub>in</sub>(h) − E<sub>out</sub>(h)| > ε] ≤ 2|H|e<sup>−2ε²N</sup>, so the bound gets worse as the complexity of the hypothesis space grows.", a:true,
+  why:"“KEY IDEA: The bound gets worse with the complexity of the hypotheses space.” A single-bin Hoeffding is not learning (it needs a fixed h); to choose among many hypotheses we pay a factor |H|."},
+ {t:"tf", q:"The VC-dimension is a way of measuring the complexity of a classifier.", a:true, orig:true,
+  why:"For infinite hypothesis sets (e.g. linear models) |H| = ∞, so complexity is redefined: the VC-dimension is the maximum number of points the hypothesis set can shatter. It replaces log|H| in the bound E<sub>out</sub> ≤ E<sub>in</sub> + √((d<sub>VC</sub>(log(2n/d<sub>VC</sub>)+1) + log(2/δ)) / 2n)."},
+ {t:"single", q:"What is the VC-dimension of a perceptron (linear classifier) in 2D?", o:["2","3","4","Infinite"], a:1,
+  why:"A line can produce all 2³ = 8 labelings of 3 points in general position, but no configuration of 4 points can be fully shattered (e.g. the XOR labeling). So d<sub>VC</sub> = 3 (in general d + 1, so 4 in 3D)."},
+ {t:"multi", q:"About the bias-complexity trade-off (L<sub>D</sub>(h) = ε<sub>app</sub> + ε<sub>est</sub>) and inductive bias, select the true statements.", o:["The approximation error ε<sub>app</sub> does not depend on the sample size","A larger hypothesis class may reduce the approximation error","The estimation error ε<sub>est</sub> decreases with the number of samples m","The estimation error decreases as |H| grows","Without any inductive bias (all possible labelings allowed) learning is guaranteed to succeed"], a:[0,1,2],
+  why:"ε<sub>app</sub> = min<sub>h∈H</sub> L<sub>D</sub>(h) measures the inductive bias of choosing H; it doesn't depend on m and a larger H can reduce it. ε<sub>est</sub> decreases with m but <b>increases</b> (logarithmically) with |H|. The No-Free-Lunch theorem says that without inductive bias any algorithm fails on some task."}
+]},
+{ id:6, title:"Pill 6 · Introduction to overfitting", src:"pill6 - introduction to overfitting_student.ipynb", qs:[
+ {t:"tf", q:"In the plot of the error rate with respect to the classifier complexity, overfitting is detected when the error rate in the training set decreases but the error rate in the test set increases.", a:true, orig:true,
+  why:"Plotting decision trees of depth 1…30 with N fixed: “as the complexity increases the training error is reduced but above a certain complexity level the test error increases. This effect is called overfitting.”"},
+ {t:"tf", q:"Bias is the value towards which both training and test error tend to converge as the number of samples increases, for a given complexity.", a:true, orig:true,
+  why:"From the learning curves: “The value towards both errors converge is also called bias, and the difference between this value and the test error is called variance.”"},
+ {t:"single", q:"You have N = 10 noise-free samples from a 10th-order polynomial, and you know the true function is a 10th-order polynomial. Following the notebook's take-home idea, which model should you fit?", o:["A 10th-order polynomial, because it matches the true model","A lower-order model (e.g. degree 3), because it matches the complexity the data can support","An 11th-order polynomial, to be safe","It does not matter since there is no noise"], a:1,
+  why:"“TAKE HOME IDEA: Independently of the data generation process we have to match the <b>data complexity</b> and not the true model complexity.” With only 10 points a degree-10 fit interpolates and generalizes badly; with N = 30 the situation changes."},
+ {t:"single", q:"Comparing learning curves of a low-complexity model (tree depth C = 1) and a higher-complexity one (C = 5), the notebook observes that the low-complexity model…", o:["converges sooner (with less data) but to a larger error","converges later but to a smaller error","never converges","always has a lower test error"], a:0,
+  why:"“With small complexity training and test errors converge sooner/with a smaller amount of data. However, with small complexity, the error of convergence is larger” — i.e. higher bias, lower variance."},
+ {t:"multi", q:"In the regression bias/variance decomposition of E<sub>D,x</sub>[(y − f(x))²], which terms appear?", o:["Bias² = E[(g(x) − f̄(x))²]","Variance = E[(f̄(x) − f(x))²]","Stochastic noise = E[η²]","Training error E<sub>in</sub>","Cross terms that are usually large"], a:[0,1,2],
+  why:"Adding and subtracting the mean hypothesis f̄(x), the expected squared error splits into bias², variance and stochastic noise; all cross terms are zero (left as a proof to deliver)."},
+ {t:"tf", q:"In the notebook's interactive k-NN demo, the classifier uses k = MAXC − C + 1 neighbours, so a higher complexity C corresponds to <b>fewer</b> neighbours.", a:true,
+  why:"<span class='m'>KNeighborsClassifier(MAXC-C+1)</span>: C = 50 → k = 1 (very wiggly boundary that misclassifies no training point), C = 20 → k = 31 (smoother). Fewer neighbours = more complex model."},
+ {t:"tf", q:"From the bound E<sub>out</sub> ≤ E<sub>in</sub> + O(√(C/N)), increasing the number of samples N for a fixed complexity C makes the bound looser.", a:false,
+  why:"The penalty term √(C/N) shrinks as N grows, so the bound gets <b>tighter</b>: E<sub>out</sub> gets closer to E<sub>in</sub>. More data delays overfitting."},
+ {t:"multi", q:"Which of the following are presented as cures to overfitting?", o:["Cross-validation (simulating the out-of-sample error)","Regularization (penalizing complexity in the objective)","Ensemble techniques","Increasing the complexity of the model","Training and testing on the same data"], a:[0,1,2],
+  why:"From the bound: (1) work with the left-hand side by simulating E<sub>out</sub> → cross-validation; (2) mimic the right-hand side by penalizing complexity → regularization; (3) ensemble techniques, implicitly similar to complexity control."}
+]},
+{ id:7, title:"Pill 7 · Stochastic subgradient methods", src:"pill7_Stochastic_Subgradient_Methods_student.ipynb", qs:[
+ {t:"tf", q:"If f is convex and differentiable at x, then its subdifferential at x contains only the gradient: ∂f(x) = {∇f(x)}.", a:true,
+  why:"The notebook: “If f is convex and differentiable at x, then ∂f(x) = {∇f(x)}, i.e. the gradient is the only subgradient.” Subgradients can also exist (possibly many) where f is not differentiable."},
+ {t:"single", q:"A point x* is a minimizer of a convex function f if and only if…", o:["∇f(x*) exists and is positive","0 ∈ ∂f(x*)","∂f(x*) is empty","f is differentiable at x*"], a:1,
+  why:"x* is a minimizer iff f is subdifferentiable at x* and 0 is a subgradient there. If f is differentiable this reduces to ∇f(x*) = 0. Differentiability is not required (think |x| at 0)."},
+ {t:"single", q:"g̃ is a noisy (unbiased) subgradient of f at x when…", o:["g̃ is always exactly a subgradient","its expected value E[g̃] is a subgradient of f at x","its variance is zero","g̃ = 0"], a:1,
+  why:"g̃ = g + v with g ∈ ∂f(x) and v zero-mean noise, i.e. E[g̃] ∈ ∂f(x). Taking the gradient of one random sample (or a mini-batch) of the least-squares loss is exactly such a noisy subgradient."},
+ {t:"tf", q:"In the subgradient method for inequality-constrained problems, if the current iterate is infeasible we take a subgradient of one of the violated constraints instead of the objective.", a:true,
+  why:"g<sup>(k)</sup> ∈ ∂f<sub>0</sub>(x<sup>(k)</sup>) if x<sup>(k)</sup> is feasible, otherwise ∂f<sub>j</sub>(x<sup>(k)</sup>) for any violated constraint j. Iterates are often infeasible (unlike the projected subgradient method), so we track the best feasible point f<sub>best</sub>."},
+ {t:"single", q:"Which step-size rule guarantees convergence (in expectation and in probability) of the stochastic subgradient method?", o:["A constant step α<sub>k</sub> = α","A square-summable but not summable step, e.g. α<sub>k</sub> = a/(b + k)","A step that grows with k","α<sub>k</sub> = e<sup>k</sup>"], a:1,
+  why:"“With square summable but not summable step size, e.g. α<sub>k</sub> = a/(b + k), it can be proved convergence in expectation… and convergence in probability.”"},
+ {t:"single", q:"What does the <b>pocket</b> strategy do?", o:["Projects the weights onto the feasible set","Keeps the best weights found so far (lowest objective), since stochastic iterates fluctuate","Stores the gradients to compute momentum","Splits the data into pockets (mini-batches)"], a:1,
+  why:"Because the objective along a stochastic path is not monotone, we keep <span class='m'>wopt</span> whenever <span class='m'>J &lt; Jopt</span>. The convergence plot of <span class='m'>Jopt</span> is then non-increasing."},
+ {t:"tf", q:"The mini-batch gradient (average gradient over a random subset of samples) is just as noisy as the gradient computed from a single sample.", a:false,
+  why:"Mini-batch “approximates the true function using more data”: averaging over several samples reduces the noise of the gradient estimate (it is a sub-sampling of the objective), giving smoother paths than single-sample SGD."},
+ {t:"multi", q:"About the speed-up methods, select the true statements.", o:["Momentum combines previously accumulated directions with the new one, with γ usually around 0.9","Adagrad adapts the learning rate independently for each coordinate using the accumulated squared gradients","Adam combines momentum with Adagrad-like per-coordinate scaling","Adagrad requires building and inverting a dense matrix D","In Adam, the usual value of γ<sub>2</sub> is 0.9"], a:[0,1,2],
+  why:"Momentum: m ← γm − αg, x ← x + m (γ≈0.9). Adagrad: D ← D + g², x ← x − α g/√(D+ε) — D is diagonal and implemented element-wise, never inverted as a dense matrix. Adam: γ<sub>1</sub> ≈ 0.9 for the momentum and γ<sub>2</sub> ≈ <b>0.999</b> for the squared-gradient average."}
+]},
+{ id:8, title:"Pill 8 · Regularization (combating overfitting)", src:"Regularization_student.ipynb", qs:[
+ {t:"tf", q:"The goal of regularization is to control the complexity of the model.", a:true, orig:true,
+  why:"“Regularization tries to explicitly model the complexity of the model… you give information to the optimization process telling what model you prefer in the absence of data.” It mimics the O(√(C/N)) term of the bound."},
+ {t:"multi", q:"Which of the following techniques can be considered as a regularization technique?", o:["Adding a norm to the loss function","Not letting an iterative method converge to the optimal solution","Adding noise to the input samples","Adding noise to the target values","Removing missing values"], a:[0,1,2], orig:true,
+  why:"The notebook covers: norm regularizers, <b>early stopping</b> (not letting the method converge), and data augmentation / dropout (noise on the <b>inputs</b> while preserving the label). Noise on targets or removing missing values are not presented as regularization."},
+ {t:"tf", q:"Using an ℓ1-norm regularizer makes it more probable to obtain solutions with components exactly equal to zero (sparse solutions).", a:true,
+  why:"On the ℓ1 ball, increasing one coordinate decreases another by the same amount (δ = −ε), and the corners lie on the axes, so many problems share minimizers with zero components. “In practice, this constraint imposes sparsity on the solution.”"},
+ {t:"single", q:"Adding a norm turns the problem into a multi-objective one (f<sub>0</sub>(x), ‖x‖<sub>p</sub>). How does the notebook travel along the Pareto-optimal surface?", o:["By scalarization: minimize f<sub>0</sub>(x) + λ‖x‖<sub>p</sub>","By minimizing only ‖x‖<sub>p</sub>","By alternating between the two objectives at each iteration","By setting λ = 0"], a:0,
+  why:"“One way to travel along the Pareto's surface is to use a method called scalarization. This consists of making a weighted combination of both functions”: f<sub>0</sub>(x) + λ‖x‖<sub>p</sub>."},
+ {t:"single", q:"In the stochastic subgradient code, ℓ1 regularization is added to the gradient as <span class='m'>g_tilde = ... + gamma*np.sign(w)</span>. Why <span class='m'>sign(w)</span>?", o:["It is a subgradient of ‖w‖<sub>1</sub>","It is the gradient of ‖w‖<sub>2</sub>²","It normalizes the weights to unit length","It implements dropout"], a:0,
+  why:"‖w‖<sub>1</sub> = Σ|w<sub>i</sub>| is not differentiable at 0, but sign(w) is a valid subgradient — which is exactly why subgradient methods are used. The resulting <span class='m'>wopt</span> shows many near-zero coefficients."},
+ {t:"single", q:"What does the <b>dropout</b> technique do, according to the notebook?", o:["Removes training samples at random","Cancels the value of attributes at random during training, essentially adding salt-and-pepper noise","Stops training early","Removes the features with the smallest weights after training"], a:1,
+  why:"“In this technique one cancels the value of the attributes at random when training. This is essentially the same as adding salt and pepper noise” — a form of noise-based data augmentation that keeps the original label."},
+ {t:"tf", q:"Data augmentation delays overfitting by artificially creating new data, for example by estimating the density and sampling from it, interpolating, or adding noise to inputs while keeping their labels.", a:true,
+  why:"Overfitting occurs when the model is too complex for the amount of data; “one way of delaying overfitting is to artificially create new data. This is called data augmentation.”"},
+ {t:"multi", q:"Select correct ways of adding a regularization term to the objective function.", o:["Control the number of coefficients different to zero","Control the size of the coefficient values","Control the sign of the coefficients","Control the maximum value of the coefficients"], a:[0,1,3], orig:true,
+  why:"Number of non-zero coefficients ↔ ℓ0 (approximated by ℓ1), size of the coefficients ↔ ℓ2 (or ℓ1), maximum value ↔ ℓ∞. All are norm-based complexity measures; the sign of the coefficients is not a measure of complexity."}
+]}
+];
+
+const CBM = {1:{ok:1,ko:0},2:{ok:2,ko:-2},3:{ok:3,ko:-6}};
+const LETTERS = "abcdefgh";
+const results = {}; // pillId -> result
+let current = 1;
+
+function el(tag, attrs={}, html=""){ const e=document.createElement(tag); for(const k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); } if(html) e.innerHTML=html; return e; }
+
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  PILLS.forEach(p=>{
+    const r=results[p.id];
+    const b=el("button",{class:"tab"+(current===p.id?" active":""),"data-id":p.id},`Pill ${p.id}`+(r?`<span class="sc">${fmt(r.total)}/${r.n}</span>`:""));
+    b.onclick=()=>showPill(p.id); nav.appendChild(b);
+  });
+  const all=el("button",{class:"tab"+(current==="all"?" active":"")},"All pills");
+  all.onclick=()=>showPill("all"); nav.appendChild(all);
+}
+
+function buildSections(){
+  const root=document.getElementById("sections");
+  PILLS.forEach(p=>{
+    const s=el("section",{class:"pill",id:"pill-"+p.id});
+    s.appendChild(el("div",{class:"pillhead"},`<h2>${p.title}</h2><div class="src">Based on: ${p.src} · ${p.qs.length} questions</div>`));
+    s.appendChild(el("div",{class:"summary",id:"sum-"+p.id,style:"display:none"}));
+    p.qs.forEach((q,i)=>s.appendChild(buildQ(p,q,i)));
+    const act=el("div",{class:"actions"});
+    const msg=el("span",{class:"warnmsg",id:"msg-"+p.id});
+    const reset=el("button",{class:"ghost"},"Reset");
+    reset.onclick=()=>resetPill(p.id);
+    const sub=el("button",{class:"primary",id:"submit-"+p.id},"Submit");
+    sub.onclick=()=>{ gradePill(p.id); buildTabs(); updateOverall(); document.getElementById("sum-"+p.id).scrollIntoView({behavior:"smooth",block:"start"}); };
+    act.append(msg,reset,sub); s.appendChild(act);
+    root.appendChild(s);
+  });
+  const allAct=el("div",{class:"actions",id:"allActions",style:"display:none"});
+  const allReset=el("button",{class:"ghost"},"Reset all");
+  allReset.onclick=()=>{ PILLS.forEach(p=>resetPill(p.id)); updateOverall(); buildTabs(); window.scrollTo({top:0,behavior:"smooth"}); };
+  const allSub=el("button",{class:"primary"},"Submit all pills");
+  allSub.onclick=()=>{ PILLS.forEach(p=>gradePill(p.id)); buildTabs(); updateOverall(); window.scrollTo({top:0,behavior:"smooth"}); };
+  allAct.append(allReset,allSub); root.appendChild(allAct);
+}
+
+function buildQ(p,q,i){
+  const name=`p${p.id}q${i}`;
+  const wrap=el("div",{class:"q",id:name});
+  wrap.appendChild(el("div",{class:"qinfo"},`<b>Question ${i+1}</b><div>${q.t==="multi"?"Multi-select":q.t==="tf"?"True / False":"Single choice"}</div><div class="pts" id="${name}-pts">Not graded</div>`));
+  const body=el("div",{class:"qbody"});
+  body.appendChild(el("div",{class:"qtext"},q.q+(q.orig?'<span class="badge">Real quiz</span>':"")));
+  body.appendChild(el("div",{class:"hint"},q.t==="multi"?"Choose one or more:":"Choose one:"));
+  const opts = q.t==="tf" ? ["True","False"] : q.o;
+  const type = q.t==="multi" ? "checkbox" : "radio";
+  opts.forEach((o,j)=>{
+    const lab=el("label",{class:"opt"});
+    lab.innerHTML=`<input type="${type}" name="${name}" value="${j}"><span>${q.t==="tf"?"":LETTERS[j]+". "}${o}</span>`;
+    body.appendChild(lab);
+  });
+  const cert=el("div",{class:"cert"});
+  cert.innerHTML=`<span>Certainty:</span>`+[1,2,3].map(c=>`<label><input type="radio" name="${name}-c" value="${c}">C=${c} ${c===1?"(unsure: &lt;67%)":c===2?"(mid: &gt;67%)":"(quite sure: &gt;80%)"}</label>`).join("");
+  body.appendChild(cert);
+  body.appendChild(el("div",{class:"verdict",id:name+"-v"}));
+  const det=el("details",{id:name+"-d",style:"display:none"});
+  det.innerHTML=`<summary>Why?</summary><p id="${name}-ans"></p><p>${q.why}</p>`;
+  body.appendChild(det);
+  wrap.appendChild(body);
+  return wrap;
+}
+
+function correctSet(q){ if(q.t==="tf") return [q.a?0:1]; if(q.t==="single") return [q.a]; return q.a.slice().sort(); }
+function answerText(q){
+  const opts = q.t==="tf" ? ["True","False"] : q.o;
+  const cs=correctSet(q);
+  return "Correct answer: <b>"+cs.map(j=>(q.t==="tf"?"":LETTERS[j]+". ")+opts[j]).join("; ")+"</b>";
+}
+function fmt(x){ return (Math.round(x*100)/100).toString(); }
+
+function gradePill(pid){
+  const p=PILLS.find(x=>x.id===pid);
+  let total=0, nCorrect=0, nAnswered=0;
+  const byC={1:{n:0,ok:0},2:{n:0,ok:0},3:{n:0,ok:0}};
+  p.qs.forEach((q,i)=>{
+    const name=`p${pid}q${i}`;
+    const picked=[...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>+x.value).sort();
+    const cEl=document.querySelector(`input[name="${name}-c"]:checked`);
+    let c=cEl?+cEl.value:null;
+    const wrap=document.getElementById(name);
+    const v=document.getElementById(name+"-v");
+    const cs=correctSet(q);
+    const isOk = picked.length===cs.length && picked.every((x,k)=>x===cs[k]);
+    wrap.classList.remove("correct","wrong","blank");
+    // option highlight
+    const inputs=[...document.querySelectorAll(`input[name="${name}"]`)];
+    inputs.forEach(inp=>{ const lab=inp.closest(".opt"); lab.classList.remove("isright","iswrong"); const j=+inp.value;
+      if(cs.includes(j)) lab.classList.add("isright"); else if(inp.checked) lab.classList.add("iswrong"); });
+    let pts=0;
+    if(picked.length===0){
+      wrap.classList.add("blank"); v.className="verdict blank"; v.textContent="Not answered (0 points)";
+    } else {
+      if(!c){ c=1; }
+      nAnswered++; byC[c].n++;
+      if(isOk){ pts=CBM[c].ok; nCorrect++; byC[c].ok++; wrap.classList.add("correct"); v.className="verdict ok"; v.textContent=`Correct · C=${c}${cEl?"":" (no certainty chosen, counted as C=1)"} → ${pts>0?"+":""}${pts}`; }
+      else { pts=CBM[c].ko; wrap.classList.add("wrong"); v.className="verdict no"; v.textContent=`Incorrect · C=${c}${cEl?"":" (no certainty chosen, counted as C=1)"} → ${pts}`; }
+    }
+    total+=pts;
+    document.getElementById(name+"-pts").innerHTML=`CBM score: <b>${pts>0?"+":""}${pts}</b>`;
+    const det=document.getElementById(name+"-d");
+    det.style.display="block";
+    det.setAttribute("data-wrong", (!isOk)?"1":"0");
+    det.querySelector("summary").textContent = isOk ? "Why? (explanation)" : "Why did I fail? (explanation)";
+    document.getElementById(name+"-ans").innerHTML=answerText(q);
+    det.open=false;
+  });
+  const n=p.qs.length;
+  results[pid]={total,n,nCorrect,nAnswered,byC};
+  renderSummary(pid);
+  document.getElementById("msg-"+pid).textContent="";
+}
+
+function certVerdict(c,b){
+  if(b.n===0) return "No answers";
+  const acc=b.ok/b.n*100;
+  const ranges={1:[0,67],2:[67,80],3:[80,100]};
+  const [lo,hi]=ranges[c];
+  let v;
+  if(acc<lo) v='<span class="badc">over-confident</span>';
+  else if(acc>hi) v='<span class="under">a bit under-confident</span>';
+  else v='<span class="good">well calibrated</span>';
+  return `Answers: ${b.n}. Accuracy: <b>${Math.round(acc)}%</b> (optimal range ${lo}%–${hi}%). You were ${v} at this certainty level.`;
+}
+
+function renderSummary(pid){
+  const r=results[pid]; const s=document.getElementById("sum-"+pid);
+  const acc = r.nAnswered? (r.nCorrect/r.n*100):0;
+  s.style.display="block";
+  s.innerHTML=`<table>
+   <tr><th>Grade</th><td><b>${fmt(r.total)}</b> out of ${r.n} (${Math.round(r.total/r.n*100)}%) · max possible ${3*r.n}</td></tr>
+   <tr><th></th><td><h3>Results for this pill (${r.n} questions)</h3></td></tr>
+   <tr><th>Average CBM score</th><td>${fmt(r.total/r.n)}</td></tr>
+   <tr><th>Accuracy</th><td>${fmt(acc)}% (${r.nCorrect}/${r.n} correct, ${r.n-r.nAnswered} unanswered)</td></tr>
+   <tr><th></th><td><h3>Breakdown by certainty</h3></td></tr>
+   ${[3,2,1].map(c=>`<tr><th>C=${c}</th><td>${certVerdict(c,r.byC[c])}</td></tr>`).join("")}
+  </table>`;
+}
+
+function resetPill(pid){
+  const p=PILLS.find(x=>x.id===pid);
+  p.qs.forEach((q,i)=>{
+    const name=`p${pid}q${i}`;
+    document.querySelectorAll(`input[name="${name}"],input[name="${name}-c"]`).forEach(x=>x.checked=false);
+    document.querySelectorAll(`#${name} .opt`).forEach(l=>l.classList.remove("isright","iswrong"));
+    const w=document.getElementById(name); w.classList.remove("correct","wrong","blank");
+    document.getElementById(name+"-v").textContent="";
+    document.getElementById(name+"-pts").textContent="Not graded";
+    document.getElementById(name+"-d").style.display="none";
+  });
+  delete results[pid];
+  const s=document.getElementById("sum-"+pid); s.style.display="none"; s.innerHTML="";
+  buildTabs(); updateOverall();
+}
+
+function updateOverall(){
+  const box=document.getElementById("overall");
+  const done=PILLS.filter(p=>results[p.id]);
+  if(done.length===0){ box.style.display="none"; return; }
+  let tot=0,n=0,ok=0; done.forEach(p=>{tot+=results[p.id].total;n+=results[p.id].n;ok+=results[p.id].nCorrect;});
+  box.style.display="block";
+  box.innerHTML=`<h3>Overall (${done.length}/${PILLS.length} pills graded): ${fmt(tot)} out of ${n} · accuracy ${Math.round(ok/n*100)}% · avg CBM ${fmt(tot/n)}</h3>
+   <div class="ovgrid">${PILLS.map(p=>{const r=results[p.id]; return `<div class="ovcell">Pill ${p.id}<b>${r?fmt(r.total)+" / "+r.n:"—"}</b>${r?r.nCorrect+"/"+r.n+" correct":"not graded"}</div>`;}).join("")}</div>`;
+}
+
+function showPill(id){
+  current=id;
+  document.querySelectorAll("section.pill").forEach(s=>s.classList.remove("show"));
+  if(id==="all"){ document.querySelectorAll("section.pill").forEach(s=>s.classList.add("show")); document.getElementById("allActions").style.display="flex"; }
+  else { document.getElementById("pill-"+id).classList.add("show"); document.getElementById("allActions").style.display="none"; }
+  buildTabs(); window.scrollTo({top:0});
+}
+
+document.getElementById("themeBtn").onclick=()=>{
+  const r=document.documentElement; const cur=r.getAttribute("data-theme");
+  const dark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.setAttribute("data-theme", dark?"light":"dark");
+};
+
+buildSections(); showPill(1);
+</script>
+</body>
+</html>
