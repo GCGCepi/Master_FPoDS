@@ -28,9 +28,9 @@
 
 ## When to stop and ask
 
-- A requirement is ambiguous, or the documents disagree.
+- A requirement is ambiguous, or the documents disagree. If asking, expect a coherent response from the user, don't let the user continue without responding.
 - The task needs something not described in the documents.
 - `spec.md` or `architecture.md` would have to change.
 - A check fails and the fix would change the agreed design.
 - A task is much bigger than expected: propose splitting it in `tasks.md`.
-- A task is finished (always).
+- Always when a  task is finished.

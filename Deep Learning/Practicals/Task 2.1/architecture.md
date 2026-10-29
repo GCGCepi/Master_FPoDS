@@ -5,7 +5,7 @@
 ```
 Task 2.1/
 ├── spec.md, architecture.md, tasks.md, aiRules.md, log.md
-└── practical1.ipynb      # all the code, one section per phase
+└── MyFirstNeuralNetwork.ipynb      # all the code, one section per phase
 ```
 
 ## Network
@@ -29,8 +29,9 @@ Parameters are a list of `(W, b)` tuples: `params = [(W1, b1), (W2, b2)]` (4,810
 | | `predict(params, X)`, `accuracy(params, X, y)` | Class = argmax of the logits; fraction correct. |
 | 3. Loss | `cross_entropy(params, X, Y)` | `-mean(sum(Y * log_softmax(forward(params, X))))`. |
 | | `loss_and_grad` | `value_and_grad(cross_entropy, 0)`: loss and gradient with respect to `params` (argument 0). |
+| | `gradient_check(params, X, Y, rng, n_checks=5, eps=1e-5)` | Compares autograd with central finite differences on entries cycling through W1, b1, W2, b2; returns the relative errors. Perturbs copies of the parameters. |
 | 4. Training | `train_step(params, X_b, Y_b, lr)` | Raises on an empty batch; computes loss and gradient; returns `θ − lr · grad` and the loss. |
-| | `train(params, data, config)` | Epoch loop: shuffle, mini-batches, `train_step`; raises if the loss is `NaN`; records the history. |
+| | `train(params, data, config)` | Epoch loop: shuffle, mini-batches, `train_step`; raises if the loss is `NaN`; records the history and prints one line per epoch (train/test loss and accuracy). |
 | 5. Results | `plot_history(history)` | Loss and accuracy curves, train vs. test. |
 | | `show_predictions(X_raw, y_true, y_pred)` | 4 × 4 grid of raw test images, wrong ones in red. |
 | | `plot_confusion_matrix(y_true, y_pred)` | 10 × 10 counts (`np.add.at`) as a heatmap. |
