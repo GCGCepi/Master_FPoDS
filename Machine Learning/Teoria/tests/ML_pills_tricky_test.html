@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML Pills Tricky Test</title>
+<style>
+:root{
+  --bg:#f4f6f9; --card:#ffffff; --qbg:#e8f1f8; --qborder:#c9dceb; --text:#1d2733; --muted:#5b6b7c;
+  --accent:#0f6cbf; --accent-soft:#dbeafa; --ok:#1f7a3a; --ok-bg:#e3f4e8; --bad:#b3261e; --bad-bg:#fbe7e5;
+  --warn:#8a5a00; --warn-bg:#fff4d6; --line:#d8e0e8; --chip:#eef2f6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --card:#19212a; --qbg:#1d2a37; --qborder:#2d4153; --text:#e3e9ef; --muted:#9aabbb;
+    --accent:#5aa8f0; --accent-soft:#1f3347; --ok:#6fd38f; --ok-bg:#16301f; --bad:#ff8a80; --bad-bg:#3a1c1a;
+    --warn:#ffcf66; --warn-bg:#352a10; --line:#2b3642; --chip:#232e39;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --card:#19212a; --qbg:#1d2a37; --qborder:#2d4153; --text:#e3e9ef; --muted:#9aabbb;
+  --accent:#5aa8f0; --accent-soft:#1f3347; --ok:#6fd38f; --ok-bg:#16301f; --bad:#ff8a80; --bad-bg:#3a1c1a;
+  --warn:#ffcf66; --warn-bg:#352a10; --line:#2b3642; --chip:#232e39;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 6px}
+h1{font-size:20px;margin:0}
+.sub{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 10px;scrollbar-width:thin}
+.tab{border:1px solid var(--line);background:var(--chip);color:var(--text);padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:13px}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab .sc{font-weight:600;margin-left:6px;opacity:.9}
+.themebtn{border:1px solid var(--line);background:var(--chip);color:var(--text);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:13px}
+main{padding:20px 0 60px}
+.intro{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:18px;font-size:14px}
+.intro table{border-collapse:collapse;margin-top:6px}
+.intro td,.intro th{border:1px solid var(--line);padding:3px 10px;text-align:center}
+section.pill{display:none}
+section.pill.show{display:block}
+.pillhead{margin:8px 0 12px}
+.pillhead h2{margin:0;font-size:19px}
+.pillhead .src{color:var(--muted);font-size:13px}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.summary table{width:100%;border-collapse:collapse;font-size:14px}
+.summary th{width:190px;text-align:right;background:var(--chip);padding:5px 10px;vertical-align:top;font-weight:600}
+.summary td{padding:5px 10px;border-bottom:1px solid var(--line)}
+.summary h3{margin:0;color:var(--accent);font-size:17px}
+.good{color:var(--ok);font-weight:600}.badc{color:var(--bad);font-weight:600}.under{color:var(--warn);font-weight:600}
+.q{display:flex;gap:12px;margin-bottom:18px}
+.qinfo{flex:0 0 96px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;height:max-content}
+.qinfo b{color:var(--accent);font-size:13px}
+.qinfo .pts{margin-top:4px}
+.qbody{flex:1;background:var(--qbg);border:1px solid var(--qborder);border-radius:8px;padding:14px 16px;min-width:0}
+.q.correct .qbody{border-left:5px solid var(--ok)}
+.q.wrong .qbody{border-left:5px solid var(--bad)}
+.q.blank .qbody{border-left:5px solid var(--warn)}
+.qtext{margin-bottom:10px}
+.badge{display:inline-block;font-size:11px;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.hint{font-size:13px;color:var(--muted);margin-bottom:4px}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:4px 6px;border-radius:6px;cursor:pointer}
+.opt input{margin-top:4px}
+.opt.isright{background:var(--ok-bg)}
+.opt.iswrong{background:var(--bad-bg)}
+.cert{margin-top:12px;font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.cert label{cursor:pointer;display:flex;gap:4px;align-items:center}
+.verdict{margin-top:10px;font-size:14px;font-weight:600}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--bad)}.verdict.blank{color:var(--warn)}
+details{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:14px}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details[data-wrong="1"] summary{color:var(--bad)}
+details p{margin:8px 0 2px}
+code,.m{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--chip);padding:0 4px;border-radius:3px}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin:6px 0 28px;flex-wrap:wrap}
+button.primary{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer}
+.warnmsg{color:var(--warn);font-size:13px;align-self:center}
+.overall{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:18px}
+.overall h3{margin:0 0 8px;font-size:16px}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ovcell{background:var(--chip);border-radius:8px;padding:8px 10px;font-size:13px}
+.ovcell b{display:block;font-size:15px}
+@media (max-width:600px){
+  .q{flex-direction:column;gap:4px}
+  .qinfo{flex:none;display:flex;gap:10px;align-items:center;height:auto}
+  .qinfo .pts{margin:0}
+  .summary th{width:120px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Machine Learning — Pills tricky test</h1>
+        <div class="sub">Aprenentatge Automàtic 26/27 · Pills 1–8 · 59 tricky questions · certainty-based marking</div>
+      </div>
+      <button class="themebtn" id="themeBtn" title="Toggle theme">◐ Theme</button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    Answer each question and choose a <b>certainty level</b>, then press <b>Submit</b> at the end of the pill. Scoring works like the Moodle quizzes (QBC/CBM):
+    <table>
+      <tr><th></th><th>C=1 (unsure, &lt;67%)</th><th>C=2 (mid, &gt;67%)</th><th>C=3 (quite sure, &gt;80%)</th></tr>
+      <tr><td>Correct</td><td>+1</td><td>+2</td><td>+3</td></tr>
+      <tr><td>Wrong</td><td>0</td><td>−2</td><td>−6</td></tr>
+    </table>
+    <div style="margin-top:6px">Multi-select questions count as correct only if you tick exactly the right set. Unanswered questions score 0. After grading, open <b>“Why?”</b> under any question for the explanation. <b>Tricky version:</b> expect near-miss statements (one swapped word, reversed roles, “always/never”) and multi-selects with several plausible distractors. Read every word.</div>
+  </div>
+  <div id="overall" class="overall" style="display:none"></div>
+  <div id="sections"></div>
+</main>
+
+<script>
+const PILLS = [
+{ id:1, title:"Pill 1 · First steps in Machine Learning", src:"pill1_first_steps_in_machine_learning_student.ipynb", qs:[
+ {t:"tf", q:"The validation set is used to estimate the expected performance of the finally selected model, while the test set is used to choose among the candidate models.", a:false,
+  why:"The roles are <b>swapped</b>. Validation data is used for model selection (choosing among models/hyper-parameters); the test set is kept aside to estimate the expected performance of the model you finally selected. That is why the breast-cancer exercise splits into training, validation (100 samples) and test (100 samples)."},
+ {t:"tf", q:"Since in scikit-learn the number of features must be fixed in advance, the feature space has to be low-dimensional.", a:false,
+  why:"The notebook says the number of features must be fixed in advance, “however it can be very high dimensional (e.g. millions of features) with most of them being zeros for a given sample.” Fixed ≠ small."},
+ {t:"single", q:"You use the same held-out split both to pick the best of several models and to report the expected accuracy of the chosen one. The reported accuracy is…", o:["An unbiased estimate of the production accuracy","Optimistically biased, because the split was also used to make the choice","Pessimistically biased, because the model saw less data","Exactly equal to the training accuracy"], a:1,
+  why:"If a data split influences the choice, the winner is partly the model that got “lucky” on that split, so its score there overestimates future performance. This is why the notebook moves to a three-way split (train / validation for selection / test for the final estimate)."},
+ {t:"multi", q:"About the churn case study, select <b>all</b> true statements.", o:["Each row of the dataset represents a subscribing telephone customer","The goal is to predict or describe the churn rate, the rate at which customers leave the service","Its value lies in the fact that retaining existing customers is usually more costly than engaging new ones","In <span class='m'>churn_curated_numerical.csv</span> the label is the last column","Churn and no-churn customers appear in roughly equal proportions"], a:[0,1,3],
+  why:"(c) is reversed: <i>engaging new customers</i> is often more costly than retaining existing ones — that is why companies run retention policies. (e) is false: the pie chart shows a strongly unbalanced dataset (≈14.5% churn). The label is taken as <span class='m'>y = data[:,-1]</span>."},
+ {t:"tf", q:"The derived features used for the digits (horizontal symmetry, area, vertical symmetry) give a higher-dimensional representation than the raw pixels.", a:false,
+  why:"Raw digits are 8×8 = 64 values; the extracted representation has only 3 features. Lower dimensionality is precisely one of the listed advantages of feature extraction."},
+ {t:"single", q:"Which of the following is listed in the notebook as a <b>drawback of using raw data</b>?", o:["Domain-specific knowledge is required","It is usually highly redundant, spans very large dimensional spaces and has unknown discriminability","It always gives lower accuracy than extracted features","It cannot be used with nearest-neighbour classifiers"], a:1,
+  why:"Raw data: advantage = no domain knowledge needed; drawbacks = highly redundant, very large dimensionality, unknown discriminability. “Domain knowledge is required” is the drawback of <i>feature extraction</i> (the trap)."}
+]},
+{ id:2, title:"Pill 2 · A quick and dirty tour about data", src:"pill2_about_data_student.ipynb", qs:[
+ {t:"tf", q:"Pair-wise deletion keeps all possible data and, because of that, allows us to fairly compare the different analyses.", a:false,
+  why:"The first half is right (it keeps all possible data for each analysis), but the notebook says it “does not necessarily allow to fairly compare different analysis since they may involve different amount of data.”"},
+ {t:"multi", q:"Which of the following are <b>single substitution</b> methods according to the notebook's classification?", o:["Replacing missing values with the mean / mode / median","Creating a dummy variable that flags the value as missing and imputing a single value","Regression imputation","Multiple imputation","Pair-wise deletion"], a:[0,1,2],
+  why:"Three families: <b>deletion</b> (complete removal, pair-wise deletion), <b>single substitution</b> (mean/mode/median, dummy variable + single value, regression imputation) and <b>model-based</b> methods (multiple imputation)."},
+ {t:"tf", q:"Multiple imputation creates a single imputed dataset in which each missing value is sampled from a distribution.", a:false,
+  why:"It creates a <b>set</b> of imputed datasets (each sampled independently), runs the analysis on all of them and aggregates the results. Sampling into just one dataset is not multiple imputation."},
+ {t:"tf", q:"In the toy regression problem, imputing the randomly missing target values with the overall mean leaves the fitted regression line essentially unchanged.", a:false,
+  why:"Mean imputation drags about half of the points to a constant value, flattening and biasing the fitted line (the yellow line differs from the blue one). The notebook then asks “What can we do to correct this issue?” — e.g. regression imputation."},
+ {t:"single", q:"When storing elements with a hash function, which two properties must the function have?", o:["Order-preserving and invertible","Random (spreads data among all indexes) and consistent (well-defined, constant rule)","Collision-free and distance-preserving","Linear and monotonic"], a:1,
+  why:"The notebook lists exactly two properties: it must be <b>random</b> (distribute data among all possible indexes) and <b>consistent</b> (the assignment rule is constant and well defined). Collisions can happen and distances are not preserved."},
+ {t:"tf", q:"A collision happens when the same sample is assigned to two different positions.", a:false,
+  why:"It is the other way round: a collision is when <b>two different samples</b> are assigned to the <b>same position</b>. A consistent hash always sends the same sample to the same position."},
+ {t:"single", q:"In the text example, what is the key difference between the hashing trick and a classical bag of words?", o:["The hashing trick counts characters instead of words","With hashing the embedding dimensionality is fixed beforehand without building a dictionary, at the price of collisions","The hashing trick preserves the order of the words","Bag of words cannot represent repeated words"], a:1,
+  why:"Bag of words needs the dictionary defined in advance (all words or a huge space). Hashing fixes the dimension (6 bins in the example) without any dictionary, but different words may collide in the same bin."},
+ {t:"multi", q:"Select <b>all</b> outlier-related statements that agree with the notebook.", o:["Statistical approaches fit a distribution and flag points with very small probability","Geometric approaches consider points on the external boundary of the data, e.g. via convex hulls","Distance-based approaches can use the distance to the k nearest neighbours","The notion of outlier is objective and uniquely defined","Percentile normalization treats a fixed percentage θ of extreme values as outliers","Outliers are always measurement errors and should always be deleted"], a:[0,1,2,4],
+  why:"The three approaches (statistical, geometric, distance-based) and the percentile scaler are all in the notebook. It explicitly says “the notion of outliers is highly subjective”, and that outliers can come from the inner dynamics of the process (e.g. heavy-tailed distributions) <i>or</i> be errors."},
+ {t:"tf", q:"k-NN works well on handwritten digits despite having one dimension per pixel because digit images are concentrated on or near a lower-dimensional manifold (the “blessing of non-uniformity”).", a:true,
+  why:"“The space of digit images is much smaller than the space of all possible images. Learners can implicitly take advantage of this lower effective dimension.” This partly counteracts the curse of dimensionality."}
+]},
+{ id:3, title:"Pill 3 · Performance measures", src:"pill3_performance_measures_student.ipynb", qs:[
+ {t:"tf", q:"Sensitivity and specificity are computed row-wise in the confusion matrix, i.e. over the predicted classes.", a:false,
+  why:"In the notebook's layout, sensitivity (TP / real positives) and specificity (TN / real negatives) are <b>column-wise</b> (over the real classes). Precision and NPV are the <b>row-wise</b> ones (over the predicted classes)."},
+ {t:"single", q:"Which measure answers: “Of all the customers that do <b>not</b> churn, what proportion do we correctly predict as non-churn?” (churn = positive)", o:["Negative predictive value","Specificity","Precision","Sensitivity"], a:1,
+  why:"The denominator is the real negatives → TN / (TN + FP) = <b>specificity</b>. NPV (the trap) divides by the <i>predicted</i> negatives: TN / (TN + FN)."},
+ {t:"tf", q:"The false positive rate used in the ROC curve equals 1 − precision.", a:false,
+  why:"FPR = FP / (FP + TN) = <b>1 − specificity</b>. 1 − precision = FP / (TP + FP) is the false discovery rate, a different quantity."},
+ {t:"tf", q:"In cancer detection, because missing a patient is very costly, we want the predictor to have very high specificity and do not accept false positives.", a:false,
+  why:"The notebook says the opposite: we want very large <b>sensitivity</b> (we do not accept false <b>negatives</b>), even if that means accepting more false positives, which can be discarded in subsequent tests."},
+ {t:"single", q:"Which expression is equivalent to the F1-score?", o:["2TP / (2TP + FP + FN)","2TP / (TP + TN + FP + FN)","(TP + TN) / (TP + FP)","TP / (2TP + FP + FN)"], a:0,
+  why:"F1 = 2·precision·recall / (precision + recall), which simplifies to 2TP / (TP + FN + TP + FP) = 2TP / (2TP + FP + FN). Note it does not use TN."},
+ {t:"multi", q:"About K-fold cross-validation as presented in the notebook, select <b>all</b> true statements.", o:["Every sample is used for testing exactly once","The K subsets are disjoint and of approximately equal size","The resulting performance metric is still a random variable, so the process can be repeated to estimate mean and variance","It removes all variability caused by the splitting process","Leave-one-out is computationally cheaper than 10-fold cross-validation","Partial statistics of each fold can be aggregated as a simple approximation"], a:[0,1,2,5],
+  why:"K-fold still depends on how the data is split, so it is “subject to some variability”. Leave-one-out is the <b>most</b> expensive (one classifier per sample)."},
+ {t:"single", q:"Business case: each customer is worth 100 units, each advertisement costs α, and a fraction β of the targeted customers who would churn are recovered. Which balance matches the notebook?", o:["−α(TP + FP) + β·100·TP","−α(TP + FN) + β·100·TP","−α·TP + β·100·(TP + FP)","−α(FP + TN) + β·100·FN"], a:0,
+  why:"We pay α for everyone we target, i.e. everyone predicted as churn (TP + FP), and we only gain from real churners we targeted (TP), of which we recover a fraction β. FN are never contacted."},
+ {t:"tf", q:"The area under the ROC curve is a perfect summary: it fully determines which classifier is better at any operating point.", a:false,
+  why:"The notebook says the AUC is “a good value for summarizing the ROC behavior. <b>Although not perfect</b> it gives a good idea for comparing classifiers.” Two curves can cross, so the best classifier can depend on the operating point."},
+ {t:"tf", q:"In the grid-search example, C and the class weights are selected inside each outer training fold, so the outer test fold is not used to choose the hyper-parameters.", a:true,
+  why:"<span class='m'>GridSearchCV</span> is fitted on the (scaled) training part of each outer KFold split, and its own internal cross-validation chooses the parameters. The outer test fold is only used to evaluate."}
+]},
+{ id:4, title:"Pill 4 · A gentle introduction to supervised learning", src:"pill4 - A gentle introduction to supervised machine learning_student.ipynb", qs:[
+ {t:"tf", q:"The model class and the hypothesis space are two different concepts: the hypothesis space is the particular set of parameters found after training.", a:false,
+  why:"They are the same thing: “The model class space is also called hypothesis space.” The particular parameters found after training are one instance (a single hypothesis) selected from that space."},
+ {t:"multi", q:"Select <b>all</b> statements consistent with the notebook's description of the problem model and the learning algorithm.", o:["The problem model can impose extra constraints such as smoothness, small complexity or sparsity","For convex / quasi-convex problems we typically use first- or second-order methods such as gradient descent, coordinate descent or Newton's method","Genetic algorithms or Monte Carlo techniques can be used when the derivatives of the objective are not available","Gradient descent can only be used when the problem has a closed-form solution","The problem model is the family of functions (e.g. lines in R²) we choose from"], a:[0,1,2],
+  why:"Gradient descent is needed precisely when we do <i>not</i> want or cannot use a closed form. The family of functions is the <b>model class</b>, not the problem model (which formalizes the desired properties, e.g. the error function)."},
+ {t:"tf", q:"In the iterative scheme, the stopping criterion can be a certain number of iterations or a desired error tolerance.", a:true,
+  why:"Step 4 of the refined process: “Repeat 2-3 until the stopping criterion is met (This can be a certain number of iterations or a desired error tolerance).”"},
+ {t:"single", q:"Why does the notebook use the extended vector x̃ = (1, x)?", o:["To normalize the data","So that the bias w₀ is absorbed into the inner product: ŷ = x̃<sup>T</sup>w","To add a non-linear feature","To make the matrix X̃X̃<sup>T</sup> diagonal"], a:1,
+  why:"Prepending a 1 lets w₀ be treated as just another weight: Σ w<sub>i</sub>x<sup>(i)</sup> + w₀ = x̃<sup>T</sup>w, which simplifies the matrix formulation and the gradient."},
+ {t:"tf", q:"The notebook increases the step from η = 0.01 to η = 0.1 to speed up the algorithm, which shows that a larger learning rate always guarantees faster convergence.", a:false,
+  why:"The notebook only uses a larger step on this specific problem. Nothing guarantees it in general (and it lists “need to choose the learning rate η” as a drawback of iterative methods). The word <i>always</i> is the trap."},
+ {t:"single", q:"What does the “convergence plot” requested in the notebook show?", o:["The value of the objective (cost) function at each iteration","The distance between the true and estimated data points","The ROC curve of the regressor","The value of the learning rate at each iteration"], a:0,
+  why:"“Compute the value of the objective function at each iteration and plot it. This is called convergence plot.”"}
+]},
+{ id:5, title:"Pill 5 · Feasibility of the learning problem", src:"pill5Feasibility.pdf · Handout_feasibility.pdf", qs:[
+ {t:"tf", q:"Hoeffding's inequality lets us say things about µ given ν, but not about ν given µ.", a:false,
+  why:"The bound is symmetric in |ν − µ|: “ν ≈ µ ⟹ µ ≈ ν. Because it is symmetric we can say things about ν given µ, but also about µ given ν.”"},
+ {t:"tf", q:"Applying Hoeffding's inequality to a single, fixed hypothesis h already constitutes learning.", a:false,
+  why:"“ATTENTION: The bin analogy requires a particular hypothesis h… This is not learning.” Learning means <i>selecting</i> a hypothesis, which needs a bound that holds for all h ∈ H (union bound)."},
+ {t:"single", q:"What does the realizability assumption state?", o:["There exists h* ∈ H with L<sub>D,f</sub>(h*) = 0","Every h ∈ H has zero empirical risk","The hypothesis class H is finite","The labels are generated by a distribution D over X × Y"], a:0,
+  why:"Realizability: there is a hypothesis in the class with zero true risk. It implies L<sub>S</sub>(h*) = 0 for any sample, but not that every h has zero empirical risk. The last option describes the later, agnostic generalization."},
+ {t:"single", q:"For a finite class H in the <b>realizable</b> case, which sample complexity bound is given in the handout?", o:["m<sub>H</sub>(ε,δ) ≤ (ln|H| + ln(1/δ)) / ε","m<sub>H</sub>(ε,δ) ≤ 2 log(2|H|/δ) / ε²","m<sub>H</sub>(ε,δ) ≤ log(2|H|/δ) / (2ε²)","m<sub>H</sub>(ε,δ) ≤ |H| / ε"], a:0,
+  why:"Realizable PAC: (ln|H| + ln 1/δ)/ε — linear in 1/ε. The 1/ε² forms are the <b>agnostic</b> PAC bound (2 log(2|H|/δ)/ε²) and the uniform-convergence bound (log(2|H|/δ)/(2ε²))."},
+ {t:"tf", q:"In agnostic PAC learning, a hypothesis is considered successful if L<sub>D</sub>(h) ≤ ε.", a:false,
+  why:"Agnostic success is <b>relative</b>: L<sub>D</sub>(h) ≤ min<sub>h'∈H</sub> L<sub>D</sub>(h') + ε. Since labels may be noisy, zero error may be impossible, so we compare against the best achievable within the class."},
+ {t:"tf", q:"If the sample S is ε-representative of H with respect to D, then any ERM hypothesis h<sub>S</sub> satisfies L<sub>D</sub>(h<sub>S</sub>) ≤ min<sub>h∈H</sub> L<sub>D</sub>(h) + ε.", a:false,
+  why:"Lemma 6.3 gives <b>2ε</b>: L<sub>D</sub>(h<sub>S</sub>) ≤ L<sub>S</sub>(h<sub>S</sub>) + ε ≤ min L<sub>S</sub>(h) + ε ≤ min L<sub>D</sub>(h) + 2ε. One ε is lost at each step. That's also why m<sub>H</sub>(ε,δ) ≤ m<sup>UC</sup><sub>H</sub>(ε/2, δ)."},
+ {t:"multi", q:"According to the fundamental theorem of statistical learning, which statements are <b>equivalent</b> to “H is PAC-learnable”?", o:["H has the uniform convergence property","ERM is a successful agnostic PAC learner for H","H is agnostic PAC-learnable","The VC-dimension of H is finite","H is a finite set","The realizability assumption holds"], a:[0,1,2,3],
+  why:"The six equivalent statements are: uniform convergence, ERM successful agnostic PAC learner, agnostic PAC-learnable, ERM successful PAC learner, PAC-learnable, finite VC-dim. A finite |H| is sufficient but not necessary (infinite classes with finite VC-dim, like linear classifiers, are learnable). Realizability is an assumption, not one of the equivalences."},
+ {t:"tf", q:"Sauer's lemma implies that, once the VC-dimension d is finite, the number of labelings H can produce on m points grows only polynomially (at most m<sup>d</sup>) instead of 2<sup>m</sup>.", a:true,
+  why:"Π<sub>H</sub>(m) ≤ Σ<sub>i≤d</sub> C(m,i) ≤ (em/d)<sup>d</sup> ≤ m<sup>d</sup>. “The colorings that we may have is dramatically reduced to a polynomial number.”"},
+ {t:"multi", q:"About the target distribution P(y|x) and the input distribution P(x), select <b>all</b> true statements.", o:["P(y|x) is what supervised learning tries to learn","P(x) quantifies the relative importance of x","Merging them as P(x, y) is exactly the target of supervised learning","With a noisy target we can write g(x) = E[y|x] and the noise is y − g(x)","Two identical feature vectors may have different labels, so the target is not always a function"], a:[0,1,3,4],
+  why:"The slides warn that merging P(x)P(y|x) into P(x,y) “mixes the two concepts. This is <b>not</b> the target of supervised learning.” The sea/sky pixel example shows why the target may not be a function."}
+]},
+{ id:6, title:"Pill 6 · Introduction to overfitting", src:"pill6 - introduction to overfitting_student.ipynb", qs:[
+ {t:"tf", q:"When there is little training data, the learning curve shows a small test error and a large training error.", a:false,
+  why:"Reversed: “When we have a little amount of training data, training error is very small but test error is very large.” The model can memorize few points but does not generalize."},
+ {t:"single", q:"In the learning-curve view, how does the notebook define <b>variance</b>?", o:["The difference between the convergence value (bias) and the test error","The difference between training and test error when N = 0","The variance of the training labels","The value towards which both errors converge"], a:0,
+  why:"“The value towards both errors converge is also called bias, and the difference between this value and the test error is called variance.” The last option is the definition of bias (the trap)."},
+ {t:"tf", q:"In the bias/variance decomposition, the stochastic noise term E[η²] can be reduced by choosing a more complex model.", a:false,
+  why:"The noise term only depends on the data-generating process (y = g(x) + η), not on the hypothesis f, so no model choice can reduce it. Model complexity trades bias² against variance."},
+ {t:"multi", q:"About the decomposition E<sub>out</sub> → 0 and the bound E<sub>out</sub> ≤ E<sub>in</sub> + O(√(C/N)), select <b>all</b> true statements.", o:["We want both E<sub>in</sub> → 0 and E<sub>out</sub> ≈ E<sub>in</sub>","E<sub>in</sub> → 0 is pursued by an optimization method that minimizes E<sub>in</sub> or a surrogate","E<sub>out</sub> ≈ E<sub>in</sub> is justified with probabilistic bounds (Hoeffding and variants)","C is the number of classes of the problem","Cross-validation works on the right-hand side of the inequality"], a:[0,1,2],
+  why:"C is a notion of model <b>complexity</b>, not the number of classes. Cross-validation simulates the out-of-sample error, i.e. it works on the <b>left-hand</b> side; regularization mimics the right-hand side."},
+ {t:"tf", q:"With 15 noisy samples from a 10th-order polynomial, fitting a 10th-order polynomial gives the best out-of-sample error, because it matches the generating function.", a:false,
+  why:"Take-home idea: match the <b>data</b> complexity, not the true model complexity. With few noisy points the degree-10 fit chases the noise, and a lower-degree model (e.g. 3) generalizes better."},
+ {t:"tf", q:"In the k-NN demo with N = 100 and C = 50 (k = 1) the boundary misclassifies no training sample, yet this setting is expected to perform worse on new data than C = 20.", a:true,
+  why:"k = 1 fits every training point (zero training error) with a very irregular boundary, which is an overfitting setting. C = 20 (k = 31) gives a smoother boundary that generalizes better despite some training errors."}
+]},
+{ id:7, title:"Pill 7 · Stochastic subgradient methods", src:"pill7_Stochastic_Subgradient_Methods_student.ipynb", qs:[
+ {t:"tf", q:"A subgradient of f can only exist at points where f is differentiable.", a:false,
+  why:"“Note that the subgradient can exist even when f is not differentiable at x, and more than one subgradient may exist.” That is the whole point of subgradient methods (e.g. |x| at 0)."},
+ {t:"tf", q:"With noisy subgradients, the objective value decreases monotonically at every iteration of the stochastic subgradient method.", a:false,
+  why:"Convergence holds only in expectation and in probability for f<sub>best</sub>; individual steps can increase the objective. That is why the notebook tracks the best point so far (f<sub>best</sub>, the pocket strategy)."},
+ {t:"multi", q:"About the subgradient method for inequality-constrained problems, select <b>all</b> true statements.", o:["If the current point is feasible, a subgradient of the objective is used","If it is infeasible, we may choose any violated constraint and use one of its subgradients","The iterates are often infeasible","The projected subgradient method also typically produces infeasible iterates","If no feasible point has been found, f<sub>best</sub> = ∞"], a:[0,1,2,4],
+  why:"The notebook says iterates of the basic method are often infeasible, but “this does not happen in the projected subgradient method”, since each iterate is projected back to the feasible set."},
+ {t:"single", q:"Which condition defines g̃ as a noisy (unbiased) subgradient of f at x?", o:["g̃ ∈ ∂f(x) for every realization of the noise","E[g̃] ∈ ∂f(x), i.e. the expected value is a subgradient","‖g̃‖ ≤ ‖∇f(x)‖","g̃ has zero mean"], a:1,
+  why:"Only the <b>expectation</b> has to be a subgradient: g̃ = g + v with g ∈ ∂f(x) and v zero-mean noise. Individual realizations need not be subgradients. It's the noise v that has zero mean, not g̃ itself."},
+ {t:"tf", q:"The notebook treats “momentum” and “inertia” as the same concept.", a:false,
+  why:"“In momentum we are trying to capture the notion of ‘inertia’ or that of ‘momentum’ (note that both are <b>different</b> concepts).”"},
+ {t:"single", q:"In Adagrad (x ← x − α (D + εI)<sup>−1/2</sup> g, with D accumulating squared gradients), what happens to coordinates that have historically had large gradients?", o:["They get larger effective steps","They get smaller effective steps","Their step is unchanged","They are frozen at zero"], a:1,
+  why:"Each coordinate is divided by the square root of its accumulated squared gradients, so coordinates with large past gradients get a smaller effective learning rate. The rate is adapted per coordinate."},
+ {t:"multi", q:"About Adam as written in the notebook, select <b>all</b> true statements.", o:["m is a decaying average of the (negative) gradients","D is a decaying average of the squared gradients","The update uses (D + εI)<sup>−1/2</sup> m","D is the plain sum of all past squared gradients, as in Adagrad","ε is added for numerical stability"], a:[0,1,2,4],
+  why:"Adam uses D ← γ₂D + (1−γ₂)g² (exponential decay, γ₂ ≈ 0.999). The plain cumulative sum is Adagrad's D, which is the trap."}
+]},
+{ id:8, title:"Pill 8 · Regularization (combating overfitting)", src:"Regularization_student.ipynb", qs:[
+ {t:"tf", q:"Adding an ℓ2 regularizer tends to produce many coefficients exactly equal to zero.", a:false,
+  why:"Sparsity is the hallmark of <b>ℓ1</b>: on the ℓ1 ball, raising one coordinate lowers another by the same amount, and the corners lie on the axes. On the round ℓ2 ball, the solution almost never hits an axis exactly."},
+ {t:"single", q:"An ℓ∞-norm regularizer penalizes…", o:["The number of non-zero coefficients","The sum of absolute values of the coefficients","The largest absolute value among the coefficients","The sign changes between consecutive coefficients"], a:2,
+  why:"‖w‖<sub>∞</sub> = max<sub>i</sub>|w<sub>i</sub>|. Number of non-zeros ↔ ℓ0, sum of absolute values ↔ ℓ1."},
+ {t:"tf", q:"Adding a norm term to the objective turns the problem into a multi-objective problem that usually has a unique optimal solution.", a:false,
+  why:"“This usually means that there is <b>not</b> a unique solution since usually the different functions to be optimized compete.” The set of solutions is the Pareto optimal surface, explored by scalarization with λ."},
+ {t:"tf", q:"Regularization can be seen as telling the optimization process which model you prefer in the absence of data, a kind of bias.", a:true,
+  why:"Directly from the notebook: “you give information to the optimization process telling what model you prefer in the absence of data (we can see this as a kind of bias).”"},
+ {t:"tf", q:"In the toy problem (9 noisy samples, degree-10 polynomial), the unconstrained least-squares coefficients reach values in the thousands, while the ℓ1-regularized subgradient solution has many coefficients close to zero.", a:true,
+  why:"The cvxpy solution with only a loose constraint (‖w‖₂ ≤ 10000) gives coefficients like 2.7·10³ and −5.8·10³ (a wildly oscillating overfit). With the ℓ1 subgradient term (gamma·sign(w)), several entries of <span class='m'>wopt</span> shrink to ~0.01–0.07 and none is larger than ~5."},
+ {t:"multi", q:"Select <b>all</b> statements that agree with the notebook about combating overfitting.", o:["Cross-validation works with the left-hand side of E<sub>out</sub> ≤ E<sub>in</sub> + O(√(C/N))","Regularization mimics the right-hand side by penalizing complexity","Ensemble techniques are implicitly similar to complexity control","Early stopping consists of letting the iterative method fully converge","Data augmentation works by increasing the complexity of the model"], a:[0,1,2],
+  why:"Early stopping means <b>not</b> letting the method converge. Data augmentation creates new data (raising N relative to complexity); it does not make the model more complex."},
+ {t:"tf", q:"In dropout, the labels of the training samples are cancelled at random during training.", a:false,
+  why:"Dropout cancels the values of the <b>attributes</b> (inputs) at random, like salt-and-pepper noise, while preserving the original label."}
+]}
+];
+
+const CBM = {1:{ok:1,ko:0},2:{ok:2,ko:-2},3:{ok:3,ko:-6}};
+const LETTERS = "abcdefgh";
+const results = {}; // pillId -> result
+let current = 1;
+
+function el(tag, attrs={}, html=""){ const e=document.createElement(tag); for(const k in attrs){ if(k==="class") e.className=attrs[k]; else e.setAttribute(k,attrs[k]); } if(html) e.innerHTML=html; return e; }
+
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  PILLS.forEach(p=>{
+    const r=results[p.id];
+    const b=el("button",{class:"tab"+(current===p.id?" active":""),"data-id":p.id},`Pill ${p.id}`+(r?`<span class="sc">${fmt(r.total)}/${r.n}</span>`:""));
+    b.onclick=()=>showPill(p.id); nav.appendChild(b);
+  });
+  const all=el("button",{class:"tab"+(current==="all"?" active":"")},"All pills");
+  all.onclick=()=>showPill("all"); nav.appendChild(all);
+}
+
+function buildSections(){
+  const root=document.getElementById("sections");
+  PILLS.forEach(p=>{
+    const s=el("section",{class:"pill",id:"pill-"+p.id});
+    s.appendChild(el("div",{class:"pillhead"},`<h2>${p.title}</h2><div class="src">Based on: ${p.src} · ${p.qs.length} questions</div>`));
+    s.appendChild(el("div",{class:"summary",id:"sum-"+p.id,style:"display:none"}));
+    p.qs.forEach((q,i)=>s.appendChild(buildQ(p,q,i)));
+    const act=el("div",{class:"actions"});
+    const msg=el("span",{class:"warnmsg",id:"msg-"+p.id});
+    const reset=el("button",{class:"ghost"},"Reset");
+    reset.onclick=()=>resetPill(p.id);
+    const sub=el("button",{class:"primary",id:"submit-"+p.id},"Submit");
+    sub.onclick=()=>{ gradePill(p.id); buildTabs(); updateOverall(); document.getElementById("sum-"+p.id).scrollIntoView({behavior:"smooth",block:"start"}); };
+    act.append(msg,reset,sub); s.appendChild(act);
+    root.appendChild(s);
+  });
+  const allAct=el("div",{class:"actions",id:"allActions",style:"display:none"});
+  const allReset=el("button",{class:"ghost"},"Reset all");
+  allReset.onclick=()=>{ PILLS.forEach(p=>resetPill(p.id)); updateOverall(); buildTabs(); window.scrollTo({top:0,behavior:"smooth"}); };
+  const allSub=el("button",{class:"primary"},"Submit all pills");
+  allSub.onclick=()=>{ PILLS.forEach(p=>gradePill(p.id)); buildTabs(); updateOverall(); window.scrollTo({top:0,behavior:"smooth"}); };
+  allAct.append(allReset,allSub); root.appendChild(allAct);
+}
+
+function buildQ(p,q,i){
+  const name=`p${p.id}q${i}`;
+  const wrap=el("div",{class:"q",id:name});
+  wrap.appendChild(el("div",{class:"qinfo"},`<b>Question ${i+1}</b><div>${q.t==="multi"?"Multi-select":q.t==="tf"?"True / False":"Single choice"}</div><div class="pts" id="${name}-pts">Not graded</div>`));
+  const body=el("div",{class:"qbody"});
+  body.appendChild(el("div",{class:"qtext"},q.q+(q.orig?'<span class="badge">Real quiz</span>':"")));
+  body.appendChild(el("div",{class:"hint"},q.t==="multi"?"Choose one or more:":"Choose one:"));
+  const opts = q.t==="tf" ? ["True","False"] : q.o;
+  const type = q.t==="multi" ? "checkbox" : "radio";
+  opts.forEach((o,j)=>{
+    const lab=el("label",{class:"opt"});
+    lab.innerHTML=`<input type="${type}" name="${name}" value="${j}"><span>${q.t==="tf"?"":LETTERS[j]+". "}${o}</span>`;
+    body.appendChild(lab);
+  });
+  const cert=el("div",{class:"cert"});
+  cert.innerHTML=`<span>Certainty:</span>`+[1,2,3].map(c=>`<label><input type="radio" name="${name}-c" value="${c}">C=${c} ${c===1?"(unsure: &lt;67%)":c===2?"(mid: &gt;67%)":"(quite sure: &gt;80%)"}</label>`).join("");
+  body.appendChild(cert);
+  body.appendChild(el("div",{class:"verdict",id:name+"-v"}));
+  const det=el("details",{id:name+"-d",style:"display:none"});
+  det.innerHTML=`<summary>Why?</summary><p id="${name}-ans"></p><p>${q.why}</p>`;
+  body.appendChild(det);
+  wrap.appendChild(body);
+  return wrap;
+}
+
+function correctSet(q){ if(q.t==="tf") return [q.a?0:1]; if(q.t==="single") return [q.a]; return q.a.slice().sort(); }
+function answerText(q){
+  const opts = q.t==="tf" ? ["True","False"] : q.o;
+  const cs=correctSet(q);
+  return "Correct answer: <b>"+cs.map(j=>(q.t==="tf"?"":LETTERS[j]+". ")+opts[j]).join("; ")+"</b>";
+}
+function fmt(x){ return (Math.round(x*100)/100).toString(); }
+
+function gradePill(pid){
+  const p=PILLS.find(x=>x.id===pid);
+  let total=0, nCorrect=0, nAnswered=0;
+  const byC={1:{n:0,ok:0},2:{n:0,ok:0},3:{n:0,ok:0}};
+  p.qs.forEach((q,i)=>{
+    const name=`p${pid}q${i}`;
+    const picked=[...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>+x.value).sort();
+    const cEl=document.querySelector(`input[name="${name}-c"]:checked`);
+    let c=cEl?+cEl.value:null;
+    const wrap=document.getElementById(name);
+    const v=document.getElementById(name+"-v");
+    const cs=correctSet(q);
+    const isOk = picked.length===cs.length && picked.every((x,k)=>x===cs[k]);
+    wrap.classList.remove("correct","wrong","blank");
+    // option highlight
+    const inputs=[...document.querySelectorAll(`input[name="${name}"]`)];
+    inputs.forEach(inp=>{ const lab=inp.closest(".opt"); lab.classList.remove("isright","iswrong"); const j=+inp.value;
+      if(cs.includes(j)) lab.classList.add("isright"); else if(inp.checked) lab.classList.add("iswrong"); });
+    let pts=0;
+    if(picked.length===0){
+      wrap.classList.add("blank"); v.className="verdict blank"; v.textContent="Not answered (0 points)";
+    } else {
+      if(!c){ c=1; }
+      nAnswered++; byC[c].n++;
+      if(isOk){ pts=CBM[c].ok; nCorrect++; byC[c].ok++; wrap.classList.add("correct"); v.className="verdict ok"; v.textContent=`Correct · C=${c}${cEl?"":" (no certainty chosen, counted as C=1)"} → ${pts>0?"+":""}${pts}`; }
+      else { pts=CBM[c].ko; wrap.classList.add("wrong"); v.className="verdict no"; v.textContent=`Incorrect · C=${c}${cEl?"":" (no certainty chosen, counted as C=1)"} → ${pts}`; }
+    }
+    total+=pts;
+    document.getElementById(name+"-pts").innerHTML=`CBM score: <b>${pts>0?"+":""}${pts}</b>`;
+    const det=document.getElementById(name+"-d");
+    det.style.display="block";
+    det.setAttribute("data-wrong", (!isOk)?"1":"0");
+    det.querySelector("summary").textContent = isOk ? "Why? (explanation)" : "Why did I fail? (explanation)";
+    document.getElementById(name+"-ans").innerHTML=answerText(q);
+    det.open=false;
+  });
+  const n=p.qs.length;
+  results[pid]={total,n,nCorrect,nAnswered,byC};
+  renderSummary(pid);
+  document.getElementById("msg-"+pid).textContent="";
+}
+
+function certVerdict(c,b){
+  if(b.n===0) return "No answers";
+  const acc=b.ok/b.n*100;
+  const ranges={1:[0,67],2:[67,80],3:[80,100]};
+  const [lo,hi]=ranges[c];
+  let v;
+  if(acc<lo) v='<span class="badc">over-confident</span>';
+  else if(acc>hi) v='<span class="under">a bit under-confident</span>';
+  else v='<span class="good">well calibrated</span>';
+  return `Answers: ${b.n}. Accuracy: <b>${Math.round(acc)}%</b> (optimal range ${lo}%–${hi}%). You were ${v} at this certainty level.`;
+}
+
+function renderSummary(pid){
+  const r=results[pid]; const s=document.getElementById("sum-"+pid);
+  const acc = r.nAnswered? (r.nCorrect/r.n*100):0;
+  s.style.display="block";
+  s.innerHTML=`<table>
+   <tr><th>Grade</th><td><b>${fmt(r.total)}</b> out of ${r.n} (${Math.round(r.total/r.n*100)}%) · max possible ${3*r.n}</td></tr>
+   <tr><th></th><td><h3>Results for this pill (${r.n} questions)</h3></td></tr>
+   <tr><th>Average CBM score</th><td>${fmt(r.total/r.n)}</td></tr>
+   <tr><th>Accuracy</th><td>${fmt(acc)}% (${r.nCorrect}/${r.n} correct, ${r.n-r.nAnswered} unanswered)</td></tr>
+   <tr><th></th><td><h3>Breakdown by certainty</h3></td></tr>
+   ${[3,2,1].map(c=>`<tr><th>C=${c}</th><td>${certVerdict(c,r.byC[c])}</td></tr>`).join("")}
+  </table>`;
+}
+
+function resetPill(pid){
+  const p=PILLS.find(x=>x.id===pid);
+  p.qs.forEach((q,i)=>{
+    const name=`p${pid}q${i}`;
+    document.querySelectorAll(`input[name="${name}"],input[name="${name}-c"]`).forEach(x=>x.checked=false);
+    document.querySelectorAll(`#${name} .opt`).forEach(l=>l.classList.remove("isright","iswrong"));
+    const w=document.getElementById(name); w.classList.remove("correct","wrong","blank");
+    document.getElementById(name+"-v").textContent="";
+    document.getElementById(name+"-pts").textContent="Not graded";
+    document.getElementById(name+"-d").style.display="none";
+  });
+  delete results[pid];
+  const s=document.getElementById("sum-"+pid); s.style.display="none"; s.innerHTML="";
+  buildTabs(); updateOverall();
+}
+
+function updateOverall(){
+  const box=document.getElementById("overall");
+  const done=PILLS.filter(p=>results[p.id]);
+  if(done.length===0){ box.style.display="none"; return; }
+  let tot=0,n=0,ok=0; done.forEach(p=>{tot+=results[p.id].total;n+=results[p.id].n;ok+=results[p.id].nCorrect;});
+  box.style.display="block";
+  box.innerHTML=`<h3>Overall (${done.length}/${PILLS.length} pills graded): ${fmt(tot)} out of ${n} · accuracy ${Math.round(ok/n*100)}% · avg CBM ${fmt(tot/n)}</h3>
+   <div class="ovgrid">${PILLS.map(p=>{const r=results[p.id]; return `<div class="ovcell">Pill ${p.id}<b>${r?fmt(r.total)+" / "+r.n:"—"}</b>${r?r.nCorrect+"/"+r.n+" correct":"not graded"}</div>`;}).join("")}</div>`;
+}
+
+function showPill(id){
+  current=id;
+  document.querySelectorAll("section.pill").forEach(s=>s.classList.remove("show"));
+  if(id==="all"){ document.querySelectorAll("section.pill").forEach(s=>s.classList.add("show")); document.getElementById("allActions").style.display="flex"; }
+  else { document.getElementById("pill-"+id).classList.add("show"); document.getElementById("allActions").style.display="none"; }
+  buildTabs(); window.scrollTo({top:0});
+}
+
+document.getElementById("themeBtn").onclick=()=>{
+  const r=document.documentElement; const cur=r.getAttribute("data-theme");
+  const dark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.setAttribute("data-theme", dark?"light":"dark");
+};
+
+buildSections(); showPill(1);
+</script>
+</body>
+</html>
