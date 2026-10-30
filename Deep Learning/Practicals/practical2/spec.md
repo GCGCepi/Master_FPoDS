@@ -2,7 +2,7 @@
 
 ## Goal
 
-A notebook, `MyFirstNeuralNetwork.ipynb`, that trains a **multilayer perceptron written from scratch** on the scikit-learn **Digits** dataset (1,797 images of 8 × 8 pixels, 10 classes). Only the gradient is automatic, computed with `autograd`.
+A notebook, `practical1.ipynb`, that trains a **multilayer perceptron written from scratch** on the scikit-learn **Digits** dataset (1,797 images of 8 × 8 pixels, 10 classes). Only the gradient is automatic, computed with `autograd`.
 
 **Allowed:** `numpy`, `autograd`, `matplotlib`, and `scikit-learn` only to load the data and split it. **Not allowed:** deep learning frameworks, scikit-learn models, hand-derived gradients.
 

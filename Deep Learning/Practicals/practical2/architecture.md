@@ -5,7 +5,7 @@
 ```
 Task 2.1/
 ├── spec.md, architecture.md, tasks.md, aiRules.md, log.md
-└── MyFirstNeuralNetwork.ipynb      # all the code, one section per phase
+└── practical1.ipynb      # all the code, one section per phase
 ```
 
 ## Network
