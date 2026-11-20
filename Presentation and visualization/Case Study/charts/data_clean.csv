@@ -1,0 +1,13 @@
+attribute,our,all_stores,attribute_full,label,theme,gap_pp,status,gap_text
+The store is well-organized.,0.4,0.38,The store is well-organized.,Well-organized store,Store experience,2.0,On par,+2 pp
+Fast and easy checkout.,0.33,0.34,Fast and easy checkout.,Fast checkout,Service,-1.0,On par,-1 pp
+Friendly and helpful employees.,0.45,0.5,Friendly and helpful employees.,Helpful employees,Service,-5.0,Behind,-5 pp
+Good promotions.,0.45,0.65,Good promotions.,Good promotions,Price & promotions,-20.0,Behind,-20 pp
+I can find what I'm looking for.,0.46,0.55,I can find what I'm looking for.,Find what I need,Service,-9.0,Behind,-9 pp
+I can find the size I need.,0.39,0.49,I can find the size I need.,Find my size,Assortment,-10.0,Behind,-10 pp
+A nice atmosphere.,0.8,0.7,A nice atmosphere.,Nice atmosphere,Store experience,10.0,Ahead,+10 pp
+Latest technology for easy shopping.,0.35,0.34,Latest technology for easy shopping.,Shopping technology,Store experience,1.0,On par,+1 pp
+Lowest sales prices.,0.4,0.6,Lowest sales prices.,Lowest prices,Price & promotions,-20.0,Behind,-20 pp
+A wide selection.,0.49,0.47,A wide selection.,Wide selection,Assortment,2.0,On par,+2 pp
+Items I can't find elsewhere.,0.74,0.54,Items I can't find elsewhere.,Unique items,Assortment,20.0,Ahead,+20 pp
+The latest styles.,0.65,0.55,The latest styles.,Latest styles,Assortment,10.0,Ahead,+10 pp

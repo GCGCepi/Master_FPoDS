@@ -1,0 +1,10 @@
+- **Chart 01:** Bar chart. Average favourable rating: our store 49%, all stores 51%.
+- **Chart 02:** Bar chart. Of 12 attributes we are ahead on 3 ahead, 4 on par, 5 behind.
+- **Chart 03:** Grouped horizontal bar chart of % favourable for our store and all stores on 12 attributes.
+- **Chart 04:** Dot plot showing the gap per attribute; largest lead Unique items +20 pp, largest gap Good promotions -20 pp.
+- **Chart 05:** Slopegraph from all stores to our store for 12 attributes; lines rise for product attributes and fall for price and service.
+- **Chart 06:** Diverging bar chart of the gap in percentage points, from +20 (unique items) to -20 (promotions and lowest prices).
+- **Chart 07:** Scatter plot of our score against the market score with a parity line; five attributes fall below it.
+- **Chart 08:** Bar chart of average gap by theme: Assortment +5.5 pp; Store experience +4.3 pp; Service -5.0 pp; Price & promotions -20.0 pp.
+- **Chart 09:** Priority matrix: market score vs our gap; promotions, lowest prices and find what I need fall in 'fix first'.
+- **Chart 10:** Diverging bar chart highlighting the three staff-driven attributes, all below the market (-1 to -9 pp).
