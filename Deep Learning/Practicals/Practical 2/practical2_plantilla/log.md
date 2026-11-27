@@ -70,6 +70,8 @@ Most choices map directly onto `spec.md` and `architecture.md`. These points nee
 - **No expected results.** This version is a template, not a guide to reproduce particular numbers: `architecture.md` describes what to build, and the documents contain no target values. The numbers in §2 of this log are the history of the earlier versions only. The checks verify correctness (shapes, leakage, raw units, keys, validation-only selection), never the size or direction of a result. (Decided with the user on 2026-11-25, after a first draft that listed the complex run's numbers as expected results.)
 - **Phase A notebook.** Copied into this folder, where both earlier implementations kept it.
 
+- **Corrections on 2026-11-27.** The documents name the working folder `practical2/` (this folder is the template it is copied from). `spec.md`: Options 2 and 3 reference FR4.3; section 8 listed among the sections with `assert` checks; FR7.1 states every use of `C`; FR7.3 lists the "times worse" column; log–log axes in FR5.5. `architecture.md` and `tasks.md` no longer refer to "the simple version" (it does not exist in the working folder); `LOW_DATA` added to the names of section 8E.
+
 ## 5. Implementation
 
 (Entries added by the assistant as tasks are completed.)

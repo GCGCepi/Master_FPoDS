@@ -23,7 +23,7 @@ Option 4 was chosen in Phase A (`A1_Phase_A_Group_Exercise.ipynb`, in this folde
 
 ### Out of scope
 
-- Options 2 and 3: they get a short explanation in Markdown, no code (FR3.3).
+- Options 2 and 3: they get a short explanation in Markdown, no code (FR4.3).
 - Repeated seeds, ablations, incomplete-physics experiments; other architectures, dropout, learning-rate schedules, hyperparameter search (except `μ` in FR8, chosen on validation).
 - Defensive code in the training section (divergence stops, trial runs, argument-clash checks): the training code stays focused on what it does and what it shows.
 - Choosing anything from test-set results. Writing the reflection answers.
@@ -39,7 +39,7 @@ Option 4 was chosen in Phase A (`A1_Phase_A_Group_Exercise.ipynb`, in this folde
 
 ## 4. Functional requirements
 
-Each requirement has a **Check**. In sections 4–6, 8E and 11 the check is written in the notebook as `assert` statements after printing the values involved. In section 7 the notebook carries no checks: the assistant verifies those tasks as described in `tasks.md` and the results are checked in section 11.
+Each requirement has a **Check**. In sections 4–6, 8, 8E and 11 the check is written in the notebook as `assert` statements after printing the values involved. In section 7 the notebook carries no checks: the assistant verifies those tasks as described in `tasks.md` and the results are checked in section 11.
 
 ### FR1 — Configuration and keys (section 4.0)
 
@@ -75,7 +75,7 @@ Each requirement has a **Check**. In sections 4–6, 8E and 11 the check is writ
 - **FR5.2 Best epoch.** After every epoch the validation MSE is computed; training returns the parameters of the epoch with the lowest one. All 300 epochs always run.
 - **FR5.3 Runs and cache.** `run_experiment` trains one model, times it (`time.time()`, including compilation) and stores its loss histories, best epoch, time, parameter count and test predictions (and, when asked, its predictions on `DATA_SHIFT`). `run_cached` saves and reloads each result in `results/<name>.npz` and records the run in `RUNS`.
 - **FR5.4 Main runs.** `baseline_s112358` and `opt4_s112358`, both also predicting on `DATA_SHIFT`.
-- **FR5.5 Loss curves.** Training (solid) and validation (dashed) curves of both main runs on log-scale axes, the best epochs marked, and one printed line per model: first and last training loss, best epoch and its validation MSE.
+- **FR5.5 Loss curves.** Training (solid) and validation (dashed) curves of both main runs on log–log axes, the best epochs marked, and one printed line per model: first and last training loss, best epoch and its validation MSE.
 - **FR5.6 Conclusion.** One Markdown cell closes the section, citing the numbers printed in FR5.5.
 - **One output per fact.** Each value appears once in the section's output: run cells print only "computed" or "loaded" per run; the training time appears only in the table of FR6; the best epoch only in FR5.5's printed line.
 
@@ -87,11 +87,11 @@ Each requirement has a **Check**. In sections 4–6, 8E and 11 the check is writ
 
 ### FR7 — Diagnostics, cold spell, plots, interpretation (section 8, rest)
 
-- **FR7.1 Option 4 diagnostics** (the only use of `C`): mean `δ`, mean and maximum `│δ│`, MAE of `ĉ` and of `ĉ − δ` against the true `c`, with printed interpretation lines.
+- **FR7.1 Option 4 diagnostics** (`C` is used only here, in FR7.3's share of steps with `c = 0`, and in FR8's table and plot, always after training): mean `δ`, mean and maximum `│δ│`, MAE of `ĉ` and of `ĉ − δ` against the true `c`, with printed interpretation lines.
 - **FR7.2 Comparison plots** on the first week (168 h) of test sequence 0, four panels: (a) true and predicted mass; (b) prediction error of both models; (c) `ĉ`, `ĉ − δ` and the true `c`; (d) `δ`.
   - Check: four panels with titles and legends.
-- **FR7.3 Cold-spell table.** The two main models on `DATA_SHIFT`'s test split: MSE in distribution and on the cold spell, physical error and violation share on the cold spell. No new training.
-  - Check: the share of cold-spell test steps with `c = 0` is printed; the inputs use `DATA`'s statistics.
+- **FR7.3 Cold-spell table.** The two main models on `DATA_SHIFT`'s test split: MSE in distribution and on the cold spell, how many times worse, physical error and violation share on the cold spell. No new training.
+  - Check: the share of cold-spell test steps with `c = 0` and the true volume ranges of the training set and of the cold-spell test set are printed; the inputs use `DATA`'s statistics.
 - **FR7.4 Interpretation.** One Markdown cell: accuracy, physical consistency (against the assignment's expected pattern, stating plainly where it differs), cost, the `ĉ`/`δ` identifiability result, and the cold spell.
 
 ### FR8 — Experiment 8E.1: a penalty on δ

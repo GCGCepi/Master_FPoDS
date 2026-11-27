@@ -48,7 +48,7 @@ Rules:
 
 ## Phase 4 — Metrics and comparison (section 8)
 
-- [ ] **4.1** ★ Metrics and the main table, in the simple layout (metric rows × model columns, "Reading" lines).
+- [ ] **4.1** ★ Metrics and the main table (metric rows × model columns, then the "Reading" lines).
   - Check: FR6.
 - [ ] **4.2** ★ Option 4 diagnostics.
   - Check: FR7.1 values printed; the interpretation lines match them.

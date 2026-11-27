@@ -6,7 +6,7 @@ How the requirements of `spec.md` are implemented: files, notebook structure, co
 
 ```
 Practical 2/
-└── practical2_plantilla/
+└── practical2/
     ├── spec.md            # what the notebook must do
     ├── architecture.md    # how it is organized (this file)
     ├── tasks.md           # what to do, in order, with progress marks
@@ -37,14 +37,14 @@ Functions that are differentiated or jitted are pure: no side effects, no in-pla
 | Section | Content | Names defined |
 | --- | --- | --- |
 | 0–3 | Environment, JAX/Flax introduction, background, scenario | unchanged |
-| 4. Data | 4.0 configuration and keys · 4.1 generator · 4.2 sanity plot · 4.3 split, normalization and the shifted test set | `CONFIG`, `run_key`, `data_key`, `generate_data`, `make_dataset`, `DATA`, `DATA_SHIFT` |
+| 4. Data | 4.0 configuration and keys · 4.1 generator · 4.2 sanity plot · 4.3 split, normalization and the shifted test set | `CONFIG`, `run_key`, `data_key`, `generate_data`, `make_dataset`, `DATA`, `DATA_SHIFT`, `seq_ids` |
 | 5. Baseline | Backbone and baseline, with the hidden-state check | `LSTMBackbone`, `ConventionalLSTM`, `n_parameters` |
 | 6. Our model | Short notes on Options 2 and 3 (no code) · Option 4 · the uniform interface (own cell) | `ResidualCorrectionLSTM`, `build_model` |
 | 7. Training | Training functions · runs and cache · main runs · loss curves · conclusion | `make_train_step` (given), `make_batch`, `make_loss_fn`, `make_val_fn`, `train_model`, `run_experiment`, `run_cached`, `RUNS`, `RESULTS`, `plot_losses` |
-| 8. Metrics and comparison | Metrics and main table · Option 4 diagnostics · comparison plots · cold-spell table · interpretation | `compute_metrics`, `violation_share`, `evaluate`, `plot_comparison` |
-| 8E. Extended experiments | Intro · 8E.1 penalty on δ · 8E.2 low-data ablation | `print_table`, `select_mu`, `MU_RESULTS`, `LOW_RESULTS` |
+| 8. Metrics and comparison | Metrics and main table · Option 4 diagnostics · comparison plots · cold-spell table · interpretation | `compute_metrics`, `violation_share`, `evaluate`, `EVAL`, `plot_comparison`, `COLD` |
+| 8E. Extended experiments | Intro · 8E.1 penalty on δ · 8E.2 low-data ablation | `print_table`, `select_mu`, `MU_RESULTS`, `MU_CHOSEN`, `LOW_DATA`, `LOW_RESULTS`, `N_SIZES`, `LOW_EVAL` |
 | 9. Reflection | Notes under each question | — |
-| 11. Before you submit | Template text · final checks · checklist ticked | — |
+| 11. Before you submit | Template text · final checks · checklist ticked | `BUNDLES`, `STORED` |
 
 ## 4. Components
 
@@ -141,7 +141,7 @@ Section 7 is written for reading the results: complete functions, short explanat
 
 ### 4.5 Metrics and comparison (section 8) — FR6, FR7
 
-**First part (as in the simple version):**
+**First part (a compact table, metrics as rows and models as columns):**
 
 - Markdown ★: accuracy (MSE, MAE) vs consistency; the one-sided physical error (only a negative implied consumption is impossible); the violation share; for Option 4 the implied consumption is `ĉ − δ`.
 - One code cell: `compute_metrics(m_pred, m, r, q, y)` → `(mse, mae, physical_error)`, with the implied consumption `((m + r) − q) − m_pred`; `violation_share(m_pred, m, r, q)`; `evaluate(result, data, prefix="test")` → dict `mse, mae, phys, share` plus, when `c_hat` is stored, `mean_delta, mean_abs_delta, max_abs_delta, mae_c, mae_eff`. Then the table:
@@ -172,7 +172,7 @@ followed by two or three "Reading" lines (FR6.2).
 
 ### 4.7 Final checks (section 11) — FR11
 
-The template's pitfall list and checklist stay; a Markdown line and one code cell are added before the checklist is ticked. The cell reads every run in `RUNS` back from `results/`, runs the six checks of FR11 with `assert`, and prints one line per check:
+The template's pitfall list and checklist stay, unchanged in wording. The template holds both in one Markdown cell, so that cell is split in two (the pitfall list, then the checklist), and a Markdown line and one code cell are inserted between them; the checklist is then ticked. The cell reads every run in `RUNS` back from `results/`, runs the six checks of FR11 with `assert`, and prints one line per check:
 
 ```
 ✓ 1. c(t) never enters the models: 6 input features, batches hold only xn, x, y
@@ -223,4 +223,4 @@ after training: predictions on the test split (100, 480) [and on DATA_SHIFT's] �
 
 ## 7. How to run
 
-Open `practical2_plantilla/A1_Phase_B_Individual_Exercise.ipynb` and choose **Restart kernel and run all**. For a fully reproducible run, delete `results/` first.
+Open `practical2/A1_Phase_B_Individual_Exercise.ipynb` and choose **Restart kernel and run all**. For a fully reproducible run, delete `results/` first.
